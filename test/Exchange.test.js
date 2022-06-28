@@ -1,4 +1,4 @@
-const { ETHER_ADDRESS } = require ('./helpers')
+const { ETHER_ADDRESS, tokens } = require ('./helpers')
 
 
 const Token = artifacts.require('./Token') 
@@ -9,11 +9,8 @@ require('chai')
 	.should()
 
 contract('Exchange', ([_deployer, _feeAccount, _user1]) => { // passing parameters to the callback function so contract() can populate them with the accounts from Truffle
-	// Helper functions that should go into helpers.js one day
-	tokens = (_readableTokens) => {
-	return new web3.utils.BN(
-		web3.utils.toWei(_readableTokens.toString(), 'ether'))
-	}
+
+console.log("Test tokens(10):" + tokens(100))
 
 	let token
 	let exchange
@@ -43,8 +40,6 @@ contract('Exchange', ([_deployer, _feeAccount, _user1]) => { // passing paramete
 	describe('depositing tokens ', () => {
 		let result
 		let amount
-
-		
 
 		describe('success', () => {
 			beforeEach(async() => {
@@ -76,7 +71,7 @@ contract('Exchange', ([_deployer, _feeAccount, _user1]) => { // passing paramete
 
 		describe('failure', () => {
 			it ('5 - fails to deposit when token is the Ether "token" (null address)', async () => {
-				await exchange.depositToken('0x0000000000000000000000000000000000000000', amount, {from: _user1}).should.be.rejected
+				await exchange.depositToken(ETHER_ADDRESS, amount, {from: _user1}).should.be.rejected
 			})
 
 			it ('6 - fails to deposit if token has not been approved', async () => {
@@ -84,5 +79,49 @@ contract('Exchange', ([_deployer, _feeAccount, _user1]) => { // passing paramete
 			
 			})		
 		})		
-	})   	
+	})   
+
+	// describe('depositing Ether ', () => {
+	// 	let result
+	// 	let amount
+	// 	// TODO: Adapt for Ether. The code below is a copy and paste from 'depositing Ether'
+	// 	describe('success', () => {
+	// 		beforeEach(async() => {
+	// 			amount = tokens(1)
+	// 			result = await exchange.depositEther({from: _user1, value: amount})
+	// 		})
+
+	// 		it('3 - tracks the token deposit', async () => {
+	// 			// Check balance on exchange
+	// 			let balance
+	// 			balance = await token.balanceOf(exchange.address)
+	// 			balance.toString().should.equal(amount.toString())
+	// 			// Check balance on user
+	// 			balance = await exchange.tokens(token.address, _user1)
+	// 			balance.toString().should.equal(amount.toString())
+	// 		})
+
+	// 		it('4 - emits deposit events', async() => {
+	// 			const log = result.logs[0] 
+	// 			log.event.should.equal('Deposit')
+	// 			const event = log.args
+	// 			event.token.should.equal(token.address, 'token address logged is correct')
+	// 			event.user.should.equal(_user1, 'user account logged is correct')
+	// 			event.amount.toString().should.equal(amount.toString(), 'amount logged is correct')
+	// 			event.balance.toString().should.equal(amount.toString(), 'balance logged is correct')
+	// 		})
+	// 	})
+
+	// 	describe('failure', () => {
+	// 		it ('5 - fails to deposit when token is the Ether "token" (null address)', async () => {
+	// 			await exchange.depositToken(ETHER_ADDRESS, amount, {from: _user1}).should.be.rejected
+	// 		})
+
+	// 		it ('6 - fails to deposit if token has not been approved', async () => {
+	// 			await exchange.depositToken(token.address, amount, {from: _user1}).should.be.rejected
+			
+	// 		})		
+	// 	})		
+	// })   
+
 })

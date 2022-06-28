@@ -1,4 +1,4 @@
-const { ETHER_ADDRESS, tokens } = require ('./helpers')
+const { ETHER_ADDRESS, tokens, ether } = require ('./helpers')
 
 
 const Token = artifacts.require('./Token') 
@@ -9,8 +9,9 @@ require('chai')
 	.should()
 
 contract('Exchange', ([_deployer, _feeAccount, _user1]) => { // passing parameters to the callback function so contract() can populate them with the accounts from Truffle
-
-console.log("Test tokens(10):" + tokens(100))
+	// D
+	console.log("Test ether(10):" + ether(100))
+	// _D
 
 	let token
 	let exchange
@@ -91,7 +92,7 @@ console.log("Test tokens(10):" + tokens(100))
 	// 			result = await exchange.depositEther({from: _user1, value: amount})
 	// 		})
 
-	// 		it('3 - tracks the token deposit', async () => {
+	// 		it('7 - tracks the Ether deposit', async () => {
 	// 			// Check balance on exchange
 	// 			let balance
 	// 			balance = await token.balanceOf(exchange.address)
@@ -123,5 +124,4 @@ console.log("Test tokens(10):" + tokens(100))
 	// 		})		
 	// 	})		
 	// })   
-
 })

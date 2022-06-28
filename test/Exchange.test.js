@@ -1,4 +1,4 @@
-//import { ETHER_ADDRESS } from './helpers'
+const { ETHER_ADDRESS } = require ('./helpers')
 
 
 const Token = artifacts.require('./Token') 

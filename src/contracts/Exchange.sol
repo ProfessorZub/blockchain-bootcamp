@@ -9,8 +9,8 @@
 // [x] Deposit tokens
 // [x] Withdraw tokens
 // [x] Check balances
-// [] Make order
-// [] Cancel order
+// [x] Make order
+// [x] Cancel order
 // [] Fill order
 // [] Charge fees
 pragma solidity ^0.5.0;
@@ -18,7 +18,7 @@ pragma solidity ^0.5.0;
 import "./Token.sol";
 
 contract Exchange {
-	using SafeMath for uint;
+	using SafeMath for uint256;
 
 	// Variables
 	address public feeAccount; // the account that receives exchange fees 
@@ -27,6 +27,7 @@ contract Exchange {
 	mapping(address => mapping(address => uint256)) public tokens; // mapping of tokens into mapping of users that hold a certain balance for that token
 	mapping(uint256 => _Order) public orders;
 	uint256 public orderCount;
+	mapping(uint256 => bool) public orderCancelled;
 
 
 	// Events
@@ -35,8 +36,11 @@ contract Exchange {
 		//_D
 	event Deposit(address token, address user, uint256 amount, uint256 balance);
 	event Withdraw(address token, address user, uint256 amount, uint256 balance);
-	event Order (uint256 id, address user,	address tokenGet, uint256 amountGet, address tokenGive, uint256 amountGive, uint256 timeStamp);
-
+	event Order (uint256 id, address user,	address tokenGet, uint256 amountGet,
+				 address tokenGive, uint256 amountGive, uint256 timeStamp);
+	event Cancel (uint256 id, address user,	address tokenGet, uint256 amountGet,
+				 address tokenGive, uint256 amountGive, uint256 timeStamp);
+	
 	// Types
 	struct _Order {
 		uint256 id;
@@ -101,6 +105,17 @@ contract Exchange {
 		orderCount = orderCount.add(1);
 		orders[orderCount] = _Order(orderCount, msg.sender, _tokenGet, _amountGet, _tokenGive, _amountGive, now);
 		emit Order(orderCount, msg.sender, _tokenGet, _amountGet, _tokenGive, _amountGive, now);
+	}
+
+	function cancelOrder(uint256 _id) public {
+		_Order memory order = orders[_id];
+		// The order must exist
+		require(order.id == _id);
+		// The owner of the order must match the user requesting the cancellation
+		require(order.user == msg.sender);
+		orderCancelled[_id] = true;
+		orderCount = orderCount.sub(1);
+		emit Cancel(_id, msg.sender, order.tokenGet, order.amountGet, order.tokenGive, order.amountGive, now);
 	}
 		
 	function () payable external {

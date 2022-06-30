@@ -8,7 +8,7 @@
 // [x] Withdraw Ether
 // [x] Deposit tokens
 // [x] Withdraw tokens
-// [] Check balances
+// [x] Check balances
 // [] Make order
 // [] Cancel order
 // [] Fill order
@@ -25,13 +25,32 @@ contract Exchange {
 	uint256 public feePercent;
 	address constant ETHER = address(0);  // trick so we can add Ether as another 'token'
 	mapping(address => mapping(address => uint256)) public tokens; // mapping of tokens into mapping of users that hold a certain balance for that token
+	mapping(uint256 => _Order) public orders;
+	uint256 public orderCount;
+
 
 	// Events
+		// D
+		//event Fallback(string message);
+		//_D
 	event Deposit(address token, address user, uint256 amount, uint256 balance);
 	event Withdraw(address token, address user, uint256 amount, uint256 balance);
-	// D
-	//event Fallback(string message);
-	//_D
+	event Order (uint256 id, address user,	address tokenGet, uint256 amountGet, address tokenGive, uint256 amountGive, uint256 timeStamp);
+
+	// Types
+	struct _Order {
+		uint256 id;
+		address user;
+		address tokenGet;
+		uint256 amountGet;
+		address tokenGive;
+		uint256 amountGive;
+		uint256 timeStamp;
+	}
+
+	// TODO: Add orders to stotrage
+	// TODO: Retrieve orders from storage
+
 
 	constructor (address _feeAccount, uint256 _feePercent) public {
 		feeAccount = _feeAccount;
@@ -78,6 +97,12 @@ contract Exchange {
 		return tokens[_token][_user];
 	}
 
+	function makeOrder(address _tokenGet, uint _amountGet,	address _tokenGive, uint _amountGive) public {
+		orderCount = orderCount.add(1);
+		orders[orderCount] = _Order(orderCount, msg.sender, _tokenGet, _amountGet, _tokenGive, _amountGive, now);
+		emit Order(orderCount, msg.sender, _tokenGet, _amountGet, _tokenGive, _amountGive, now);
+	}
+		
 	function () payable external {
 		revert();
 	}

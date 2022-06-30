@@ -219,4 +219,14 @@ contract('Exchange', ([_deployer, _feeAccount, _user1]) => { // passing paramete
 		})
 	})
 
+	describe('making orders', () => {
+		beforeEach ( async() => {
+			result = await exchange.makeOrder(token.address, tokens(1), ETHER_ADDRESS, ether(1), {from: _user1})
+		})
+
+		it('18 - tracks order creation', async() => {
+			const orderCount = await exchange.orderCount()
+			orderCount.toString().should.equal('1')
+		})
+	})
 })

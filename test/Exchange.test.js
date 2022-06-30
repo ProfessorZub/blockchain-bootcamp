@@ -203,6 +203,10 @@ contract('Exchange', ([_deployer, _feeAccount, _user1]) => { // passing paramete
 			it ('15 - rejects withdraw for insuficient balance', async () => {
 				await exchange.withdrawToken(token.address, tokens(1), {from: _user1}).should.be.rejected
 			})	
+
+			it ('16 - rejects withdraw for Ether "token"', async () => {
+				await exchange.withdrawToken(ETHER_ADDRESS, tokens(1), {from: _user1}).should.be.rejected
+			})
 		})		
 	}) 
 

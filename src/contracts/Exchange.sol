@@ -30,7 +30,7 @@ contract Exchange {
 	event Deposit(address token, address user, uint256 amount, uint256 balance);
 	event Withdraw(address token, address user, uint256 amount, uint256 balance);
 	// D
-	event Fallback(string message);
+	//event Fallback(string message);
 	//_D
 
 	constructor (address _feeAccount, uint256 _feePercent) public {
@@ -39,7 +39,6 @@ contract Exchange {
 	}
 
 	function depositEther() payable public {
-		// How much? msg.value
 		// Track Ether balance using same mapping variable as we use for ERC20 tokens
 		tokens[ETHER][msg.sender] = tokens[ETHER][msg.sender].add(msg.value);
 		// Emit event
@@ -54,32 +53,28 @@ contract Exchange {
 	}
 
 	function depositToken (address _token, uint _amount) public {
-		// Which token? _token
-		// How much? _amount
 		// Don't allow Ether deposits with this function. There is another function for that purpose.
 		require(_token != ETHER);
 		// Send tokens to this contract (and stop if it returns false)
 		require(Token(_token).transferFrom(msg.sender, address(this), _amount));
 		// Manage deposit: update balance
 		tokens[_token][msg.sender] = tokens[_token][msg.sender].add(_amount);
-		// Emit event
 		emit Deposit(_token, msg.sender, _amount, tokens[_token][msg.sender]);
 	}
 
 	function withdrawToken(address _token, uint _amount) public {
+		// Don't allow Ether withdrawals with this function
+		require(_token != ETHER);
+		// Confirm balance is enough
 		require(tokens[_token][msg.sender] >= _amount);
+		// Send tokens to user
 		tokens[_token][msg.sender] = tokens[_token][msg.sender].sub(_amount);
-		//require(Token(_token).approve(address(this), _amount));
-		//require(Token(_token).transferFrom(address(this), msg.sender, _amount));
+		// Update user balance
 		require(Token(_token).transfer(msg.sender, _amount));
 		emit Withdraw(_token, msg.sender, _amount, tokens[_token][msg.sender]);
 	}
 
-	// TODO: does not look like we are actually calling this fallback function when we do a sendTransaction on this contract
 	function () payable external {
-		//D
-		//emit Fallback('Fallback was called');
-		//_D
 		revert();
 	}
 }

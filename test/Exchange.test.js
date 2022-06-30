@@ -237,5 +237,11 @@ contract('Exchange', ([_deployer, _feeAccount, _user1]) => { // passing paramete
 			order.amountGive.toString().should.equal(ether(1).toString(),'amount to give is correct')
 			order.timeStamp.toString().length.should.be.at.least(1,'timestamp is present')
 		})
+
+		it('19 - order creation emits Order event', async() => {
+			result.event.toString().should.equal('Order')
+			const log = result.logs
+
+		})
 	})
 })

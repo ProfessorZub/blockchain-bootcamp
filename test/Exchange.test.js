@@ -103,7 +103,7 @@ contract('Exchange', ([_deployer, _feeAccount, _user1]) => { // passing paramete
 		})
 	})
 
-	describe('fallback', async () => {
+	describe('fallback', () => {
 		it('9 - reverts when Ether is sent', async () => {
 			// NOTE: Contract  does not need to refund user when receiving a send transaction of Ether because revert() will ensure they get it back (minus gas fees)
 
@@ -139,7 +139,7 @@ contract('Exchange', ([_deployer, _feeAccount, _user1]) => { // passing paramete
 			result = await exchange.withdrawEther(amount, {from: _user1})
 		})
 
-		describe('success', async () => {
+		describe('success', () => {
 			it('10 - withdraws Ether', async () => {
 				const balance = await exchange.tokens(ETHER_ADDRESS, _user1)
 				balance.toString().should.equal('0')
@@ -157,7 +157,7 @@ contract('Exchange', ([_deployer, _feeAccount, _user1]) => { // passing paramete
 			})
 		})
 
-		describe('failure', async () => {
+		describe('failure', () => {
 			it('12 - rejects withdraw for insuficient balance', async () => {
 				await exchange.withdrawEther(ether(100)).should.be.rejected
 			})
@@ -209,5 +209,14 @@ contract('Exchange', ([_deployer, _feeAccount, _user1]) => { // passing paramete
 			})
 		})		
 	}) 
+
+	describe('checking balances', () => {
+
+		it('17 - returns balances', async () => {
+			await exchange.depositEther({from: _user1, value: ether(1)})
+			result = await exchange.balanceOf(ETHER_ADDRESS, _user1)
+			result.toString().should.equal(ether(1).toString())
+		})
+	})
 
 })

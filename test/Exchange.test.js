@@ -238,9 +238,17 @@ contract('Exchange', ([_deployer, _feeAccount, _user1]) => { // passing paramete
 			order.timeStamp.toString().length.should.be.at.least(1,'timestamp is present')
 		})
 
-		it('19 - order creation emits Order event', async() => {
-			result.event.toString().should.equal('Order')
-			const log = result.logs
+		it('19 - order creation emits Order event', async() => {		
+			const log = result.logs[0]
+			log.event.should.equal('Order')
+			const event = log.args
+			event.id.toString().should.equal('1','id is correct')
+			event.user.toString().should.equal(_user1,'user is correct')
+			event.tokenGet.toString().should.equal(token.address,'token to get is correct')
+			event.amountGet.toString().should.equal(tokens(1).toString(),'amount to get is correct')
+			event.tokenGive.toString().should.equal(ETHER_ADDRESS ,'token to give is correct')
+			event.amountGive.toString().should.equal(ether(1).toString(),'amount to give is correct')
+			event.timeStamp.toString().length.should.be.at.least(1,'timestamp is present')
 
 		})
 	})

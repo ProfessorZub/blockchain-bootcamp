@@ -173,7 +173,7 @@ contract('Token', ([deployer, receiver, exchange]) => { // passing parameters to
 				event.value.toString().should.equal(amount.toString())
 			})
 
-			it('15 - resets the 1allowance for delegated token spending', async() => {
+			it('15 - resets the allowance for delegated token spending', async() => {
 				const allowance = await token.allowance(deployer, exchange)
 				allowance.toString().should.equal('0')
 			})

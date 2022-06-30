@@ -1,0 +1,16 @@
+
+Compiling your contracts...
+===========================
+> Compiling ./src/contracts/Exchange.sol
+> Compiling ./src/contracts/Migrations.sol
+> Compiling ./src/contracts/Token.sol
+> Compiling openzeppelin-solidity/contracts/math/SafeMath.sol
+> Artifacts written to /tmp/test--6479-FGLMO8cmZaMx
+> Compiled successfully using:
+   - solc: 0.5.16+commit.9c3226ce.Emscripten.clang
+
+
+[0m[0m
+[0m  Contract: Exchange[0m
+[0m    deployment [0m
+    [32m  ✓[0m[90m 1 - tracks the fee account[0m

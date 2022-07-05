@@ -294,4 +294,82 @@ contract('Exchange', ([_deployer, _feeAccount, _user1, _user2]) => { // passing 
 			})
 		})
 	})
+
+	describe('fill orders', () => {
+		let etherToGet = ether(13)
+		let tokensToGive = tokens(27)
+		beforeEach(async () => {
+			// User 1 deposits 50 tokens onto the platform
+			await token.approve(exchange.address, tokens(100), {from: _user1})
+			await exchange.depositToken(token.address, tokens(50), {from: _user1})
+			// User 2 deposits 20 Ether onto the platform
+			await exchange.depositEther({from: _user2, value: ether(20)})
+			// User 1 creates an order to get 13 Ether in exchange for 27 Tokens 
+			await exchange.makeOrder(ETHER_ADDRESS, etherToGet, token.address, tokensToGive, {from: _user1})
+		})
+
+		describe('success', async () => {
+			
+			beforeEach(async () => {
+				// User 2 fulfills the order giving 10 Ether + fees (in Ether) and receiving 25 Tokens
+				result = await exchange.fillOrder(1, {from: _user2})
+			})
+				
+
+			it('24 - executes a trade and charges fees', async () => {
+				// Token balance of user 1 goes down by 27, so it should be 23
+				let tokenBalanceUser1 = await exchange.balanceOf(token.address, _user1)
+				tokenBalanceUser1.toString().should.equal(tokens(23).toString(), 'user1 trades in right amount of tokens')
+				// Ether balance of user 1 goes up by 13, so it should be 13 
+				let etherBalanceUser1 = await exchange.balanceOf(ETHER_ADDRESS, _user1)
+				etherBalanceUser1.toString().should.equal(ether(13).toString(), 'user 1 receives right amount of tokens')
+				// Token balance of user 2 goes up by 27, so it should be 27
+				let tokenBalanceUser2 = await exchange.balanceOf(token.address, _user2)
+				tokenBalanceUser2.toString().should.equal(tokens(27).toString(), ' user 2 receives right amount of tokens')
+				// Ether balance of user 2 goes down by 13, so it should be 7 minus fee (10% of 13 = 1.3 Ether) = 5.7 Ether
+				let etherBalanceUser2 = await exchange.balanceOf(ETHER_ADDRESS, _user2)
+				etherBalanceUser2.toString().should.equal(ether(5.7).toString(), 'user 2 trades in right amount of tokens')
+				// Collected fee (1.3 Ether) goes to the fee account.
+				let etherBalancefeeAccount = await exchange.balanceOf(ETHER_ADDRESS, _feeAccount)
+				etherBalancefeeAccount.toString().should.equal(ether(1.3).toString(), 'feeAccount receives the fee')
+			})
+
+			it('25 - updates filled orders', async () => {
+				// the orderFilled mapping should say true for the order 1
+				const orderFilled = await exchange.orderFilled(1)
+				orderFilled.should.be.true
+			})
+
+			it('26 - emits Trade events', async () => {
+				// Check there is a Trade event and has the right values
+				const log = result.logs[0]
+				log.event.should.equal('Trade')
+				const event = log.args
+				event.id.toString().should.equal('1','id is correct')
+				event.user.toString().should.equal(_user1,'user is correct')
+				event.tokenGet.toString().should.equal(ETHER_ADDRESS,'token to get is correct')
+				event.amountGet.toString().should.equal(etherToGet.toString(),'amount to get is correct')
+				event.tokenGive.toString().should.equal(token.address,'token to give is correct')
+				event.amountGive.toString().should.equal(tokensToGive.toString(),'amount to give is correct')
+				event.timeStamp.toString().length.should.be.at.least(1,'timestamp is present') 
+			})
+		})
+
+		describe('failure', () => {
+			it('27 - rejects invalid order ids', async () => {
+				// There is no order 7 so cannot fill it
+				await exchange.fillOrder(7, {from: _user2}).should.be.rejected
+			})
+
+			it('28 - rejects already filled orders', async () => {
+				await exchange.fillOrder(1, {from: _user2})
+				await exchange.fillOrder(1, {from: _user2}).should.be.rejected
+			})
+
+			it('29 - rejects canceled orders', async () => {
+				await exchange.cancelOrder(1, {from: _user1})
+				await exchange.fillOrder(1, {from: _user2}).should.be.rejected
+			})
+		})
+	})
 })

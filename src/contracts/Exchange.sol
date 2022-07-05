@@ -28,18 +28,51 @@ contract Exchange {
 	mapping(uint256 => _Order) public orders;
 	uint256 public orderCount;
 	mapping(uint256 => bool) public orderCancelled;
-
+	mapping(uint256 => bool) public orderFilled;
 
 	// Events
 		// D
 		//event Fallback(string message);
 		//_D
-	event Deposit(address token, address user, uint256 amount, uint256 balance);
-	event Withdraw(address token, address user, uint256 amount, uint256 balance);
-	event Order (uint256 id, address user,	address tokenGet, uint256 amountGet,
-				 address tokenGive, uint256 amountGive, uint256 timeStamp);
-	event Cancel (uint256 id, address user,	address tokenGet, uint256 amountGet,
-				 address tokenGive, uint256 amountGive, uint256 timeStamp);
+	event Deposit(
+		address token,
+	 	address user,
+	 	uint256 amount,
+	 	uint256 balance);
+
+	event Withdraw(
+		address token,
+		address user,
+		uint256 amount,
+		uint256 balance);
+
+	event Order (
+		uint256 id,
+		address user,
+		address tokenGet,
+		uint256 amountGet,
+		address tokenGive,
+		uint256 amountGive,
+		uint256 timeStamp);
+
+	event Cancel(
+		uint256 id,
+		address user,
+		address tokenGet,
+		uint256 amountGet,
+		address tokenGive,
+		uint256 amountGive,
+		uint256 timeStamp);
+	
+	event Trade(
+		uint256 id,
+		address user,
+		address tokenGet,
+		uint256 amountGet,
+		address tokenGive,
+		uint256 amountGive,
+		address userFill,
+		uint256 timeStamp);
 	
 	// Types
 	struct _Order {
@@ -116,6 +149,35 @@ contract Exchange {
 		orderCancelled[_id] = true;
 		orderCount = orderCount.sub(1);
 		emit Cancel(_id, msg.sender, order.tokenGet, order.amountGet, order.tokenGive, order.amountGive, now);
+	}
+
+	function fillOrder(uint256 _id) public {
+		require(_id > 0 && _id <= orderCount);
+		require(!orderCancelled[_id]);
+		require(!orderFilled[_id]);
+		// Fetch order
+		_Order memory order = orders[_id];
+		_trade(order.id, order.user, order.tokenGet, order.amountGet, order.tokenGive, order.amountGive);
+		// Mark order as filled
+		 orderFilled[_id] = true;
+
+	}
+
+	function _trade(uint256 _id, address _user,	address _tokenGet, uint256 _amountGet, address _tokenGive, uint256 _amountGive) internal {
+		// Charge fees. Paid by the party fulfilling the order. Taken from the token they want to trade in (_tokenGet)
+		// as a percentage of the amount they are going to receive (_amountGet). 
+		uint256 feeAmount = _amountGet.mul(feePercent).div(100);		
+
+		// Execute the trade		
+		tokens[_tokenGet][msg.sender] = tokens[_tokenGet][msg.sender].sub(_amountGet.add(feeAmount));
+		tokens[_tokenGive][msg.sender] = tokens[_tokenGive][msg.sender].add(_amountGive);
+			// fee collected goes to the special account: feeAccount
+		tokens[_tokenGet][feeAccount] = tokens[_tokenGet][feeAccount].add(feeAmount);
+		tokens[_tokenGet][_user] = tokens[_tokenGet][_user].add(_amountGet);
+		tokens[_tokenGive][_user] = tokens[_tokenGive][_user].sub(_amountGive);
+
+		// Emit Trade event
+		emit Trade(_id, _user, _tokenGet, _amountGet, _tokenGive, _amountGive, msg.sender, now);
 	}
 		
 	function () payable external {

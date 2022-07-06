@@ -11,8 +11,8 @@
 // [x] Check balances
 // [x] Make order
 // [x] Cancel order
-// [] Fill order
-// [] Charge fees
+// [x] Fill order
+// [x] Charge fees
 pragma solidity ^0.5.0;
 
 import "./Token.sol";

@@ -147,14 +147,15 @@ contract Exchange {
 		// The owner of the order must match the user requesting the cancellation
 		require(order.user == msg.sender);
 		orderCancelled[_id] = true;
-		orderCount = orderCount.sub(1);
+		// TODO: I don't think order count should go down with cancelled orders
+		//orderCount = orderCount.sub(1);
 		emit Cancel(_id, msg.sender, order.tokenGet, order.amountGet, order.tokenGive, order.amountGive, now);
 	}
 
 	function fillOrder(uint256 _id) public {
-		require(_id > 0 && _id <= orderCount);
-		require(!orderCancelled[_id]);
-		require(!orderFilled[_id]);
+		require(_id > 0 && _id <= orderCount, "Order ID not valid.");
+		require(!orderCancelled[_id], "This order was already cancelled.");
+		require(!orderFilled[_id], "This order was already filled.");
 		// Fetch order
 		_Order memory order = orders[_id];
 		_trade(order.id, order.user, order.tokenGet, order.amountGet, order.tokenGive, order.amountGive);

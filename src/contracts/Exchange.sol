@@ -147,8 +147,6 @@ contract Exchange {
 		// The owner of the order must match the user requesting the cancellation
 		require(order.user == msg.sender);
 		orderCancelled[_id] = true;
-		// TODO: I don't think order count should go down with cancelled orders
-		//orderCount = orderCount.sub(1);
 		emit Cancel(_id, msg.sender, order.tokenGet, order.amountGet, order.tokenGive, order.amountGive, now);
 	}
 

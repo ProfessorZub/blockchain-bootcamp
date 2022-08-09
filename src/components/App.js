@@ -54,7 +54,8 @@ class App extends Component {
     return (
       <div>
         <Navbar />
-        <Contents />
+        { this.props.contractsLoaded ? <Contents /> : <div className="content"></div> }
+        
       </div>
     )
   }
@@ -62,10 +63,8 @@ class App extends Component {
 }  
 
 function mapStateToProps(state) {
-  console.log(">>>Contracts loaded? ",contractsLoadedSelector(state))
   return {
-    account: accountSelector(state)
-  // TODO: Fill me in...
+    contractsLoaded: contractsLoadedSelector(state)
   }
 }
 export default connect(mapStateToProps)(App)

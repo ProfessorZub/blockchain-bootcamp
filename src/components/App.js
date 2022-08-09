@@ -25,10 +25,16 @@ class App extends Component {
     const abi = Token.abi
     const networks = Token.networks
     const networkID = await web3.eth.net.getId()
-    const tokenAddress = Token.networks[networkID].address
+    //const tokenAddress = await Token.networks[networkID].address // causes crash when not in correct network
     const token = await loadToken(web3, networkID, dispatch)
-    const totalSupply = await token.methods.totalSupply().call()
+    if (!token) {
+      window.alert('Token smart contract not detected on the current network. Please select another network with Metamask.')
+    }
+    //const totalSupply = await token.methods.totalSupply().call()  // causes crash when not in correct network
     const exchange = await loadExchange(web3, networkID, dispatch)
+    if (!exchange) {
+      window.alert('Exchange smart contract not detected on the current network. Please select another network with Metamask.')
+    }
 
     // log({networkType})
     // log({chainID})
@@ -42,15 +48,12 @@ class App extends Component {
     // log({token})
     // log({totalSupply})
 
-    // function log(obj) {   
-    //   console.log(obj)
-    // }   
+    function log(obj) {   
+      console.log(obj)
+    }   
   }
 
   render() {
-    //D
-    console.log(">> " + this.props.account) // This gets loaded twice. Why?
-    //_D
     return (
       <div>
         <Navbar />

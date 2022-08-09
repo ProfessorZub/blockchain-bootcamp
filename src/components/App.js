@@ -7,6 +7,7 @@ import { loadWeb3,
   loadExchange }
 from '../store/interactions'
 import Token from '../abis/Token.json'
+import { accountSelector } from '../store/selectors'
 
 class App extends Component {
   componentWillMount() {
@@ -44,6 +45,9 @@ class App extends Component {
   }
 
   render() {
+    //D
+    console.log(">> " + this.props.account) // This gets loaded twice. Why?
+    //_D
     return (
       <div>
         <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -137,7 +141,8 @@ class App extends Component {
 
 function mapStateToProps(state) {
   return {
-    // TODO: Fill me in...
+    account: accountSelector(state)
+  // TODO: Fill me in...
   }
 }
 export default connect(mapStateToProps)(App)

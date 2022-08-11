@@ -871,11 +871,11 @@
       "events": {},
       "links": {},
       "address": "0xA129740dE173425b1cccB1824C823eF16795d121",
-      "transactionHash": "0xa09b3c8c951b5ea9e25351325949f28f8a203752c033feb04a647278816da995"
+      "transactionHash": "0x928a3d6013067a6576f4174b76aca0642050ef6f93ae624df82d81993b229a7e"
     }
   },
-  "schemaVersion": "3.4.8",
-  "updatedAt": "2022-07-07T21:35:19.946Z",
+  "schemaVersion": "3.2.3",
+  "updatedAt": "2022-08-10T18:43:20.489Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}

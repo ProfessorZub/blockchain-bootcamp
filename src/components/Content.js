@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { exchangeSelector } from  '../store/selectors'
+import { exchangeSelector, connectionSelector } from  '../store/selectors'
 import { loadAllOrders } from '../store/interactions'
 
 class Content extends Component {
@@ -9,7 +9,7 @@ class Content extends Component {
   }
 
 async loadBlockchainData(dispatch){
-  await loadAllOrders(this.props.exchange, dispatch) 
+  await loadAllOrders(this.props.connection, this.props.exchange, dispatch) 
 }
 
   render() {
@@ -84,7 +84,8 @@ async loadBlockchainData(dispatch){
 
 function mapStateToProps(state) {
   return {
-    exchange: exchangeSelector(state)
+    exchange: exchangeSelector(state),
+    connection: connectionSelector(state)
   }
 }
 

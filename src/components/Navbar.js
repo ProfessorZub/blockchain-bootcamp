@@ -30,7 +30,6 @@ class Navbar extends Component {
 function mapStateToProps(state) {
   return {
     account: accountSelector(state)
-  // TODO: Fill me in...
   }
 }
 

@@ -1,5 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import {
+	filledOrdersLoadedSelector,
+	filledOrdersSelector
+} from '../store/selectors'
 
 class Trades extends Component {
 	render() {
@@ -33,7 +37,8 @@ class Trades extends Component {
 
 function mapStateToProps(state) {
   return {
-	// TODO: Fill me in...
+	filledOrdersLoaded: filledOrdersLoadedSelector(state),
+	filledOrders: filledOrdersSelector(state)
   }
 }
 

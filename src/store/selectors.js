@@ -155,7 +155,7 @@ const openOrders = state => {
 }
 
 
-
+// Order Book
 // The order book will be loaded when all the types of orders are loaded.
 // TODO: This seems a bit dangerous. The only protection against trying to show the order book before we finish building it up is the order
 // in which we map the state to the props in OrderBook.js: first we call orderBookSelector and then orderBookLoadedSelector; we use the latter to 
@@ -208,5 +208,90 @@ const decorateOrderBookOrder = (order) => {
 		orderType,
 		orderTypeClass: orderType === 'buy' ? GREEN : RED,		// for css to change the color of the font depending on type of order
 		orderFillClass: orderType === 'buy' ? 'sell' : 'buy'	// TODO: css for what??
+	})
+}
+
+// My Filled Orders
+export const myFilledOrdersLoadedSelector = createSelector(filledOrdersLoaded, loaded => loaded ) 
+
+export const myFilledOrdersSelector = createSelector(
+	account,
+	filledOrders,
+	(account, orders) => {
+		// Find our orders
+		orders = orders.filter((o) => o.user === account || o.userFill === account ) // this includes orders created by account or filled by account
+		// Sort orders by date ascending
+		orders = orders.sort((a,b) => a.timeStamp - b.timeStamp)
+		// Decorate orders - add display attributes
+		orders = decorateMyFilledOrders(orders, account)
+		return orders
+	}
+)
+
+const decorateMyFilledOrders = (orders, account) => {
+	return(
+		orders.map((order) => {
+			order = decorateOrder(order)
+			orders = decorateMyFilledOrder(order, account)
+			return(order)
+		})
+	)
+}
+
+const decorateMyFilledOrder = (order, account) => {
+	// The order passed to this function could be one that account created or filled. 'myOrder' will be true if 'order' was created by account.
+	const myOrder = order.user === account 
+
+	// If the order belongs to account and token given is ETH then it is "my buy order". If token given is MAGG then it is "my sell order"
+	// For the rest, which would be orders that account filled, the opposite is true. Token given is ETH means it was someone else's buy order so it was my sell.
+	let orderType
+	if (myOrder) {
+		orderType = order.tokenGive === ETHER_ADDRESS ? 'buy' : 'sell'	
+	} else {
+		orderType = order.tokenGive === ETHER_ADDRESS ? 'sell' : 'buy'
+	}
+
+	return({
+		...order,
+		orderType,
+		orderTypeClass: (orderType === 'buy' ? GREEN : RED),  // for UI display
+		orderSign: (orderType === 'buy' ? '+' : '-')		 // for UI display
+	})
+}
+
+// My Open Orders
+export const myOpenOrdersLoadedSelector = createSelector(orderBookLoaded, loaded => loaded ) 
+
+export const myOpenOrdersSelector = createSelector(
+	account,
+	openOrders,
+	(account, orders) => {
+		// Find our orders
+		orders = orders.filter((o) => o.user === account)
+		// Decorate orders - add display attributes
+		orders = decorateMyOpenOrders(orders)
+		// Sort orders by date descending
+		orders = orders.sort((a,b) => b.timeStamp - a.timeStamp)
+		return orders
+	}
+)
+
+const decorateMyOpenOrders = (orders) => {
+	return(
+		orders.map((order) => {
+			order = decorateOrder(order)
+			orders = decorateMyOpenOrder(order)
+			return(order)
+		})
+	)
+}
+
+const decorateMyOpenOrder = (order, account) => {
+	let orderType = order.tokenGive === ETHER_ADDRESS ? 'buy' : 'sell'
+
+	return({
+		...order,
+		orderType,
+		orderTypeClass: (orderType === 'buy' ? GREEN : RED)  // for UI display
 	})
 }

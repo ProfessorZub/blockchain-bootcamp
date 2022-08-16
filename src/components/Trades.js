@@ -1,9 +1,31 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import Spinner from './Spinner'
 import {
 	filledOrdersLoadedSelector,
-	filledOrdersSelector
+	filledOrdersSelector,
 } from '../store/selectors'
+
+const showFilledOrders = (filledOrders) => {
+	return(
+	
+	    <tbody>
+	      { filledOrders.map(
+	      	  (order) => {
+	      	  	return(
+	      	  	  <tr className={`order-${order.id}`} key={order.id}>
+	      	  	  	<td className="text-muted">{ order.formattedTimeStamp }</td>
+	      	  	  	<td>{ order.tokenAmount }</td>
+	      	  	  	<td className={`text-${order.tokenPriceClass}`}>{ order.tokenPrice }</td>
+	      	  	  </tr>
+	      	  	)
+	      	  }
+	      	)
+	      }	
+	    </tbody>
+	
+	)
+}
 
 class Trades extends Component {
 	render() {
@@ -16,17 +38,13 @@ class Trades extends Component {
 		        <div className="card-body">
 		       	  <table className="table table-dark table-sm small">
 		       	  	<thead>
-		       	  	  <tr>
+		       	  	  <tr>		       	  	  
 		       	  	    <th>Time</th>
 		       	  	    <th>MAGG</th>
 		       	  	    <th>MAGG/ETH</th>
-		       	  	   </tr>
-		       	  	   <tr>
-		       	  	      <td>Orders</td>
-		       	  	      <td>go</td>
-		       	  	      <td>here</td>  
-		       	  		</tr>
+		       	  	  </tr>
 		       	  	</thead>
+		       	  	{ this.props.filledOrdersLoaded ? showFilledOrders(this.props.filledOrders) : <Spinner type="table" /> }
 		       	  </table>
 		        </div>
 		      </div>        

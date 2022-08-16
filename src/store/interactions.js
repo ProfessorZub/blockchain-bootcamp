@@ -8,6 +8,7 @@ import {
 	filledOrdersLoaded,
 	allOrdersLoaded	
 } from './actions'
+import { log } from '../helpers'
 import Token from '../abis/Token.json'
 import Exchange from '../abis/Exchange.json'
 
@@ -67,8 +68,7 @@ export const loadAllOrders = async (connection, exchange, dispatch) => {
 	const startBlock = currentBlock - 1000
 	const cancelStream = await exchange.getPastEvents('Cancel', { fromBlock: startBlock, toBlock: 'latest'})
 	// Format cancelled orders
-	const cancelledOrders = cancelStream.map((event) => event.returnValues)
-	log({cancelledOrders})
+	const cancelledOrders = cancelStream.map((event) => event.returnValues)  // event.returnValues contains the actual orders
 	// Add cancelled orders to the redux store
 	dispatch(cancelledOrdersLoaded(cancelledOrders))
 
@@ -82,7 +82,3 @@ export const loadAllOrders = async (connection, exchange, dispatch) => {
 	const allOrders = orderStream.map((event) => event.returnValues)
 	dispatch(allOrdersLoaded(allOrders))
 }
-
-function log(obj) {   
-  console.log(obj)
-} 

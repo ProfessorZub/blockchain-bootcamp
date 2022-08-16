@@ -1,16 +1,19 @@
 import React, { Component } from 'react'
 import './App.css'
+import { log } from '../helpers'
 import Navbar from './Navbar'
 import Contents from './Content'
 import { connect } from 'react-redux'
-import { loadWeb3,
+import { 
+  loadWeb3,
   loadAccount,
   loadToken,
-  loadExchange }
-from '../store/interactions'
+  loadExchange
+} from '../store/interactions'
 import Token from '../abis/Token.json'
-import { accountSelector } from '../store/selectors'
-import { contractsLoadedSelector } from '../store/selectors'
+import { 
+  contractsLoadedSelector
+} from '../store/selectors'
 
 class App extends Component {
   componentWillMount() {
@@ -47,10 +50,7 @@ class App extends Component {
     // log({tokenAddress})
     // log({token})
     // log({totalSupply})
-
-    function log(obj) {   
-      console.log(obj)
-    }   
+ 
   }
 
   render() {
@@ -71,7 +71,3 @@ function mapStateToProps(state) {
   }
 }
 export default connect(mapStateToProps)(App)
-
-function log(obj) {   
-  console.log(obj)
-} 

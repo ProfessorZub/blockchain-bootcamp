@@ -29,6 +29,7 @@ export function exchangeLoaded(contract) {
 	}
 }
 
+// ORDERS
 export function cancelledOrdersLoaded(cancelledOrders) {
 	return {
 		type: 'CANCELLED_ORDERS_LOADED',

@@ -12,3 +12,8 @@ export const ether = (wei) => {
 
 // Tokens and ether have same decimal resolution so the same function will format tokens in natural units
 export const tokens = ether
+
+// Pass a variable like this: log({var}) and you  will get logged: {var: value_of_var} 
+export const log = (obj) => {   
+  console.log(obj)
+} 

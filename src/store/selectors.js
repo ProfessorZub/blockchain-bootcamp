@@ -1,8 +1,7 @@
-import { get, reject, groupBy } from 'lodash'
+import { get, reject, groupBy, maxBy, minBy } from 'lodash'
 import { createSelector } from 'reselect'
 import moment from 'moment'
-import { log } from '../helpers'
-import { ETHER_ADDRESS, tokens, ether, RED, GREEN} from '../helpers'
+import { log, ETHER_ADDRESS, tokens, ether, RED, GREEN} from '../helpers'
 
 //D: For using web3 in Content.js retrieving it from state. Did this because I wanted to read the current block number to limit how far I look for orders (Ganache crashing if I go to far back)
 const connection = state => get(state, 'web3.connection', false)
@@ -294,4 +293,44 @@ const decorateMyOpenOrder = (order, account) => {
 		orderType,
 		orderTypeClass: (orderType === 'buy' ? GREEN : RED)  // for UI display
 	})
+}
+
+export const priceChartLoadedSelector = createSelector(filledOrdersLoaded, loaded => loaded)
+
+export const priceChartSelector = createSelector(
+	filledOrders,
+	(orders) => {
+		// Sort orders by date ascending
+		orders = orders.sort((a,b) =>  a.timeStamp - b.timeStamp)
+		// Decorate orders with general decoration
+		orders = orders.map((order) => decorateOrder(order))
+
+		return({
+			series: [{
+				 a: true//data: buildGraphData(orders)
+			}]
+		})
+	}
+)
+
+const buildGraphData = (orders) => {
+	// Group orders by the hour
+	orders = groupBy(orders, (o) => moment.unix(o.timeStamp).startOf('hour').format())  // returns an object with keys = value of the 'moment' function we passed. Keys are sorted ascending since they are numerical.
+	// Get each hour that actually has orders
+	const hours = Object.keys(orders)  // This will get an array made of the keys of, you will get as values an array with the orders from that hour.
+	// Build the graph series
+	const graphData = hours.map((hour) => {
+		// Fetch all the orders from current hour
+		const group = orders[hour] // Note: the hours are already sored in ascending order. Even if they were not already, groupBy does that.
+		// Calculate price values: open, high, low and close from that hour
+		const open = group[0] 					// first order
+		const high = maxBy(group, 'tokenPrice') // order with the highest tokenPrice
+		const low = minBy(group, 'tokenPrice')  // order with the lowest tokenPrice
+		const close = group[group.length()-1]   // last order
+		return({
+			x: new Date(hour),
+			y:[open.tokenPrice, high.tokenPrice, low.tokenPrice, close.tokenPrice]
+		})
+	})
+	return graphData
 }

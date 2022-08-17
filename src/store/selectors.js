@@ -232,7 +232,7 @@ const decorateMyFilledOrders = (orders, account) => {
 	return(
 		orders.map((order) => {
 			order = decorateOrder(order)
-			orders = decorateMyFilledOrder(order, account)
+			order = decorateMyFilledOrder(order, account)
 			return(order)
 		})
 	)
@@ -280,7 +280,7 @@ const decorateMyOpenOrders = (orders) => {
 	return(
 		orders.map((order) => {
 			order = decorateOrder(order)
-			orders = decorateMyOpenOrder(order)
+			order = decorateMyOpenOrder(order)
 			return(order)
 		})
 	)

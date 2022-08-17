@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Tabs, Tab } from 'react-bootstrap'
+import Tabs from 'react-bootstrap/Tabs'
+import Tab  from 'react-bootstrap/Tab'
 import Spinner from './Spinner'
 import {
 	myFilledOrdersLoadedSelector,
@@ -50,8 +51,8 @@ class MyTransactions extends Component {
 	              My Transactions
 	            </div>
 	            <div className="card-body">
-	            	<Tabs defaultActiveKey="trades" className="bg-dark">
-	            		<Tab eventKey="trades" title="Trades" tabClassName="">
+	            	<Tabs defaultActiveKey="trades"  className="bg-dark text-white">
+	            		<Tab eventKey="trades" title="Trades">
 	            			<table className="table table-dark table-sm small">
 	            				<thead>
 	            					<tr>
@@ -64,7 +65,7 @@ class MyTransactions extends Component {
 	            				{showMyFilledOrders ? showMyFilledOrders(this.props.myFilledOrders) : <Spinner /> }
 	            			</table>
 	            		</Tab>
-	            		<Tab eventKey="orders" title="Orders" tabClassName="">
+	            		<Tab eventKey="orders" title="Orders">
 	            			<table className="table table-dark table-sm small">
 	            				<thead>
 	            					<tr>
@@ -85,12 +86,12 @@ class MyTransactions extends Component {
 
 function mapStateToProps(state) {
 	//D
-	// console.log({
-	// 	myFilledOrders: myFilledOrdersSelector(state),
-	// 	showMyFilledOrders: myFilledOrdersLoadedSelector(state),
-	// 	myOpenOrders: myOpenOrdersSelector(state),
-	// 	showMyOpenOrders: myOpenOrdersLoadedSelector(state)	
-	// })
+	console.log({
+		myFilledOrders: myFilledOrdersSelector(state),
+		showMyFilledOrders: myFilledOrdersLoadedSelector(state),
+		myOpenOrders: myOpenOrdersSelector(state),
+		showMyOpenOrders: myOpenOrdersLoadedSelector(state)	
+	})
 	//_D
 	return{
 		myFilledOrders: myFilledOrdersSelector(state),

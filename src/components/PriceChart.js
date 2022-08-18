@@ -11,7 +11,10 @@ import {
 const showPriceChart = (priceChart) => {
 	return(
 		<div className="price-chart">
-			<Chart options={chartOptions} series={dummyData} type='candlestick' width='100%' height='100%'/>
+			<div className="price">
+				<h4>MAGG/ETH &nbsp; {priceChart.lastPrice}</h4>
+			</div>
+			<Chart options={chartOptions} series={priceChart.series} type='candlestick' width='100%' height='100%'/>
 		</div>
 	)
 }

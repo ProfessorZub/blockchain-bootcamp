@@ -304,10 +304,20 @@ export const priceChartSelector = createSelector(
 		orders = orders.sort((a,b) =>  a.timeStamp - b.timeStamp)
 		// Decorate orders with general decoration
 		orders = orders.map((order) => decorateOrder(order))
+		// Get last two orders for final price & price change
+		let secondLastOrder, lastOrder
+		[secondLastOrder, lastOrder] = orders.slice(orders.length -2) // returns second to last and last 
+		log({secondLastOrder})
+		log({lastOrder})
+		// Get last order price
+		const lastPrice = get(lastOrder, 'tokenPrice', 0)
+		const secondLastPrice = get(secondLastOrder, 'tokenPrice', 0)
 
 		return({
+			lastPrice,
+			lastPriceChange: (lastPrice >= secondLastPrice ? '+' : '-'),
 			series: [{
-				 a: true//data: buildGraphData(orders)
+				 data: buildGraphData(orders)
 			}]
 		})
 	}
@@ -326,7 +336,7 @@ const buildGraphData = (orders) => {
 		const open = group[0] 					// first order
 		const high = maxBy(group, 'tokenPrice') // order with the highest tokenPrice
 		const low = minBy(group, 'tokenPrice')  // order with the lowest tokenPrice
-		const close = group[group.length()-1]   // last order
+		const close = group[group.length-1]   // last order
 		return({
 			x: new Date(hour),
 			y:[open.tokenPrice, high.tokenPrice, low.tokenPrice, close.tokenPrice]

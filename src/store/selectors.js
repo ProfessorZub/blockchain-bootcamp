@@ -306,16 +306,14 @@ export const priceChartSelector = createSelector(
 		orders = orders.map((order) => decorateOrder(order))
 		// Get last two orders for final price & price change
 		let secondLastOrder, lastOrder
-		[secondLastOrder, lastOrder] = orders.slice(orders.length -2) // returns second to last and last 
-		log({secondLastOrder})
-		log({lastOrder})
+		[secondLastOrder, lastOrder] = orders.slice(orders.length -2) // returns second to last and last orders
 		// Get last order price
 		const lastPrice = get(lastOrder, 'tokenPrice', 0)
 		const secondLastPrice = get(secondLastOrder, 'tokenPrice', 0)
 
 		return({
 			lastPrice,
-			lastPriceChange: (lastPrice >= secondLastPrice ? '+' : '-'),
+			lastPriceChange: (lastPrice >= secondLastPrice ? '+' : '-'), // If the last price is greater than previous price, we had an increase (+) otherwise decrease (-)
 			series: [{
 				 data: buildGraphData(orders)
 			}]

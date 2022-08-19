@@ -7,10 +7,14 @@ import {
 	myFilledOrdersLoadedSelector,
 	myFilledOrdersSelector,
 	myOpenOrdersLoadedSelector,
-	myOpenOrdersSelector
+	myOpenOrdersSelector,
+	exchangeSelector,
+	accountSelector
 } from '../store/selectors'
+import { cancelOrder } from '../store/interactions'
 
-const showMyFilledOrders = (myFilledOrders) => {
+const showMyFilledOrders = (props) => {
+	const { myFilledOrders} = props
 	return(
 		<tbody>
 			{ myFilledOrders.map(order => {
@@ -26,7 +30,8 @@ const showMyFilledOrders = (myFilledOrders) => {
 	)
 }
 
-const showMyOpenOrders = (myOpenOrders) => {
+const showMyOpenOrders = (props) => {
+	const { myOpenOrders, dispatch, exchange, account } = props
 	return(
 		<tbody>
 			{ myOpenOrders.map(order => {
@@ -34,7 +39,11 @@ const showMyOpenOrders = (myOpenOrders) => {
 					<tr key={order.id}>
 						<td className={`text-${order.orderTypeClass}`}>{ order.tokenAmount }</td>
 						<td className={`text-${order.orderTypeClass}`}>{ order.tokenPrice }</td>
-						<td className="text-muted">x</td>
+						<td className="text-muted cancel-order"
+							onClick={(e) => {
+								cancelOrder(dispatch, exchange , order, account)
+							}}
+						>X</td>
 					</tr>
 				)})
 			}
@@ -62,7 +71,7 @@ class MyTransactions extends Component {
 	            					</tr>
 	            					<tr></tr>
 	            				</thead>
-	            				{showMyFilledOrders ? showMyFilledOrders(this.props.myFilledOrders) : <Spinner /> }
+	            				{showMyFilledOrders ? showMyFilledOrders(this.props) : <Spinner /> }
 	            			</table>
 	            		</Tab>
 	            		<Tab eventKey="orders" title="Orders">
@@ -74,7 +83,7 @@ class MyTransactions extends Component {
 	            						<th>Cancel</th>
 	            					</tr>
 	            				</thead>
-	            				{showMyOpenOrders ? showMyOpenOrders(this.props.myOpenOrders) : <Spinner /> }
+	            				{showMyOpenOrders ? showMyOpenOrders(this.props) : <Spinner /> }
 	            			</table>
 	            		</Tab>
 	            	</Tabs>
@@ -89,7 +98,9 @@ function mapStateToProps(state) {
 		myFilledOrders: myFilledOrdersSelector(state),
 		showMyFilledOrders: myFilledOrdersLoadedSelector(state),
 		myOpenOrders: myOpenOrdersSelector(state),
-		showMyOpenOrders: myOpenOrdersLoadedSelector(state)
+		showMyOpenOrders: myOpenOrdersLoadedSelector(state),
+		exchange: exchangeSelector(state),
+		account: accountSelector(state)
 	}
 }
 

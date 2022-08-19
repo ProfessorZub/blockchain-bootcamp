@@ -6,7 +6,8 @@ import {
 	exchangeLoaded,
 	cancelledOrdersLoaded,
 	filledOrdersLoaded,
-	allOrdersLoaded	
+	allOrdersLoaded,
+	orderCancelling	
 } from './actions'
 import { log } from '../helpers'
 import Token from '../abis/Token.json'
@@ -82,3 +83,17 @@ export const loadAllOrders = async (connection, exchange, dispatch) => {
 	const allOrders = orderStream.map((event) => event.returnValues)
 	dispatch(allOrdersLoaded(allOrders))
 }
+
+export const cancelOrder = (dispatch, exchange, order, account) => {
+	// Call cancelOrder on the exchange contract. Needs an order id passed to it an an account to verify ownership of the order.
+	exchange.methods.cancelOrder(order.id).send({ from: account })
+	.on('transactionHash', (hash) =>{
+		// Create and dispatch an action so the UI gets updated accordingly
+		dispatch(orderCancelling())
+	})
+	.on('error', (error) => {
+		log({error})
+		window.alert('There was an error!')
+	})	
+}
+

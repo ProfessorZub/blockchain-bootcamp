@@ -9,7 +9,8 @@ import {
 	myOpenOrdersLoadedSelector,
 	myOpenOrdersSelector,
 	exchangeSelector,
-	accountSelector
+	accountSelector,
+	orderCancellingSelector
 } from '../store/selectors'
 import { cancelOrder } from '../store/interactions'
 
@@ -69,9 +70,8 @@ class MyTransactions extends Component {
 	            						<th>MAGG</th>
 	            						<th>MAGG/ETH</th>
 	            					</tr>
-	            					<tr></tr>
 	            				</thead>
-	            				{showMyFilledOrders ? showMyFilledOrders(this.props) : <Spinner /> }
+	            				{this.props.showMyFilledOrders ? showMyFilledOrders(this.props) : <Spinner type='table' /> }
 	            			</table>
 	            		</Tab>
 	            		<Tab eventKey="orders" title="Orders">
@@ -83,7 +83,7 @@ class MyTransactions extends Component {
 	            						<th>Cancel</th>
 	            					</tr>
 	            				</thead>
-	            				{showMyOpenOrders ? showMyOpenOrders(this.props) : <Spinner /> }
+	            				{this.props.showMyOpenOrders ? showMyOpenOrders(this.props) : <Spinner type='table' /> }
 	            			</table>
 	            		</Tab>
 	            	</Tabs>
@@ -94,11 +94,14 @@ class MyTransactions extends Component {
 }
 
 function mapStateToProps(state) {
+	const myOpenOrdersLoaded = myOpenOrdersLoadedSelector(state)
+	const orderCancelling = orderCancellingSelector(state)
+	//console.log({state})
 	return{
 		myFilledOrders: myFilledOrdersSelector(state),
 		showMyFilledOrders: myFilledOrdersLoadedSelector(state),
 		myOpenOrders: myOpenOrdersSelector(state),
-		showMyOpenOrders: myOpenOrdersLoadedSelector(state),
+		showMyOpenOrders: myOpenOrdersLoaded  && !orderCancelling,
 		exchange: exchangeSelector(state),
 		account: accountSelector(state)
 	}

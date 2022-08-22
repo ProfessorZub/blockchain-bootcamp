@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { exchangeSelector, connectionSelector } from  '../store/selectors'
-import { loadAllOrders } from '../store/interactions'
+import { 
+  loadAllOrders,
+  subscribeToEvents
+ } from '../store/interactions'
 import OrderBook from './OrderBook'
 import Trades from './Trades'
 import MyTransactions from './MyTransactions'
@@ -9,11 +12,13 @@ import PriceChart from './PriceChart'
 
 class Content extends Component {
   componentWillMount() {
-    this.loadBlockchainData(this.props.dispatch)
+    this.loadBlockchainData(this.props)
   }
 
-  async loadBlockchainData(dispatch){
-    await loadAllOrders(this.props.connection, this.props.exchange, dispatch) 
+  async loadBlockchainData(props){
+    const { dispatch, exchange, connection} = props
+    await loadAllOrders(connection, exchange, dispatch) // TODO: Can you refactor to only pass here exchange and dispatch? Get connection from the state via selector?
+    await subscribeToEvents(dispatch, exchange)
   }
 
   render() {

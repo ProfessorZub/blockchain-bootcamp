@@ -7,7 +7,8 @@ import {
 	cancelledOrdersLoaded,
 	filledOrdersLoaded,
 	allOrdersLoaded,
-	orderCancelling	
+	orderCancelling,
+	orderCancelled	
 } from './actions'
 import { log } from '../helpers'
 import Token from '../abis/Token.json'
@@ -62,7 +63,8 @@ export const loadExchange = async (web3, networkId, dispatch) => {
 	}
 }
 
-export const loadAllOrders = async (connection, exchange, dispatch) => {
+// TODO: Can you refactor to only pass here exchange and dispatch? Get connection from the state via selector?
+export const loadAllOrders = async (connection, exchange, dispatch) => { 
 	// Fetch cancelled orders with the "Cancel" event stream
 	const currentBlock = await connection.eth.getBlockNumber()
 	//log({currentBlock})
@@ -93,7 +95,13 @@ export const cancelOrder = (dispatch, exchange, order, account) => {
 	})
 	.on('error', (error) => {
 		log({error})
-		window.alert('There was an error!')
+		window.alert('There was an error cancelling the order!')
 	})	
 }
 
+export const subscribeToEvents = async (dispatch, exchange) => {
+	exchange.events.Cancel({}, (error, event) =>{		// subscribe to the Cancel event of our exchange. We pass an empty filter as first parameter with {}.
+														// we receive the event which includes the order that triggered the event
+		dispatch(orderCancelled(event.returnValues))	// dispatch a new action to change the redux state and trigger UI update
+	})
+} 

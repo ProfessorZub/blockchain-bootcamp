@@ -57,3 +57,11 @@ export function orderCancelling() {
 		type: 'ORDER_CANCELLING'
 	}
 }
+
+// Order was cancelled
+export function orderCancelled(order) {
+	return {
+		type: 'ORDER_CANCELLED',
+		order 
+	}
+}

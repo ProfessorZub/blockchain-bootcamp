@@ -21,8 +21,6 @@ function token(state = {}, action) {
 }
 
 function exchange(state = {}, action) {
-	console.log("~~~~")
-	console.log({state})
 	switch (action.type) {
 		case 'EXCHANGE_LOADED':
 			return {...state, loaded:true, contract: action.contract}

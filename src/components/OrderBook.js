@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { OverlayTrigger, Tooltip} from 'react-bootstrap'
 import Spinner from './Spinner'
 import {
 	orderBookSelector,
@@ -8,11 +9,21 @@ import {
 
 const renderOrder = (order) => {
 	return(
-		<tr key={order.id}>
-			<td>{order.tokenAmount}</td>
-			<td className={`text-${order.orderTypeClass}`}> { order.tokenPrice } </td>
-			<td>{ order.etherAmount }</td>
-		</tr>
+    <OverlayTrigger
+      key={order.id}
+      placement='top'
+      overlay={
+        <Tooltip id={order.id}>
+          {`Click here to ${order.orderFillAction}`}
+        </Tooltip>
+      }
+    >
+			<tr key={order.id}>
+				<td>{order.tokenAmount}</td>
+				<td className={`text-${order.orderTypeClass}`}> { order.tokenPrice } </td>
+				<td>{ order.etherAmount }</td>
+			</tr>
+		</OverlayTrigger>
 	)
 }
 
@@ -52,6 +63,8 @@ class OrderBook extends Component {
 }
 
 function mapStateToProps(state) {
+	const orderBook = orderBookSelector(state)
+	console.log({orderBook})
   return { // keep the order of the following statements to make sure the orderBook is built before trying to show it
 		orderBook: orderBookSelector(state),
 		showOrderBook: orderBookLoadedSelector(state)

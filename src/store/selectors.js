@@ -177,12 +177,13 @@ export const orderBookSelector = createSelector(
 			...orders,
 			buyOrders: buyOrders.sort((a,b) => b.tokenPrice - a.tokenPrice)  	// b greater than a to give thruthy result -> ascending order
 		}
+
 		// Get the 'sell' orders
 		const sellOrders = get(orders, 'sell', [])
 		// Sort orders by token price
 		orders = {
 			...orders,
-			sellOrders: sellOrders.sort((a,b) => b.tokenPrice - a.tokenPrice)  	// b greater than a to give thruthy result -> ascending order
+			sellOrders: sellOrders.sort((a,b) => b.tokenPrice - a.tokenPrice) 	// b greater than a to give thruthy result -> ascending order
 		}
 		return orders	
 	}
@@ -206,7 +207,7 @@ const decorateOrderBookOrder = (order) => {
 		...order, 
 		orderType,
 		orderTypeClass: orderType === 'buy' ? GREEN : RED,		// for css to change the color of the font depending on type of order
-		orderFillClass: orderType === 'buy' ? 'sell' : 'buy'	// TODO: css for what??
+		orderFillAction: orderType === 'buy' ? 'sell' : 'buy'	// for tool-tip to prompt user to sell if the open order was a buy or buy if it was a sell.
 	})
 }
 

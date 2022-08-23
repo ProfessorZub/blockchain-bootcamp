@@ -8,7 +8,8 @@ import {
 	filledOrdersLoaded,
 	allOrdersLoaded,
 	orderCancelling,
-	orderCancelled	
+	orderCancelled,
+	orderFilling	
 } from './actions'
 import { log } from '../helpers'
 import Token from '../abis/Token.json'
@@ -86,6 +87,13 @@ export const loadAllOrders = async (connection, exchange, dispatch) => {
 	dispatch(allOrdersLoaded(allOrders))
 }
 
+export const subscribeToEvents = async (dispatch, exchange) => {
+	exchange.events.Cancel({}, (error, event) =>{		// subscribe to the Cancel event of our exchange. We pass an empty filter as first parameter with {}.
+														// we receive the event which includes the order that triggered the event
+		dispatch(orderCancelled(event.returnValues))	// dispatch a new action to change the redux state and trigger UI update
+	})
+} 
+
 export const cancelOrder = (dispatch, exchange, order, account) => {
 	// Call cancelOrder on the exchange contract. Needs an order id passed to it an an account to verify ownership of the order.
 	exchange.methods.cancelOrder(order.id).send({ from: account })
@@ -99,9 +107,16 @@ export const cancelOrder = (dispatch, exchange, order, account) => {
 	})	
 }
 
-export const subscribeToEvents = async (dispatch, exchange) => {
-	exchange.events.Cancel({}, (error, event) =>{		// subscribe to the Cancel event of our exchange. We pass an empty filter as first parameter with {}.
-														// we receive the event which includes the order that triggered the event
-		dispatch(orderCancelled(event.returnValues))	// dispatch a new action to change the redux state and trigger UI update
-	})
-} 
+export const fillOrder = (dispatch, exchange, order, account) => {
+	// Call cancelOrder on the exchange contract. Needs an order id passed to it an an account to verify ownership of the order.
+	// exchange.methods.fillOrder(order.id).send({ from: account })
+	// .on('transactionHash', (hash) =>{
+	// 	// Create and dispatch an action so the UI gets updated accordingly
+	// 	dispatch(orderFilling())
+	// })
+	// .on('error', (error) => {
+	// 	log({error})
+	// 	window.alert('There was an error filling the order!')
+	// })	
+	console.log("Hey, I am going to fill and Order")
+}

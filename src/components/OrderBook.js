@@ -4,10 +4,15 @@ import { OverlayTrigger, Tooltip} from 'react-bootstrap'
 import Spinner from './Spinner'
 import {
 	orderBookSelector,
-	orderBookLoadedSelector
+	orderBookLoadedSelector,
+	exchangeSelector,
+	accountSelector,
+	orderFillingSelector	
 } from '../store/selectors'
+import { fillOrder } from '../store/interactions'
 
-const renderOrder = (order) => {
+const renderOrder = (order, props) => {
+	const { dispatch, exchange, account} = props
 	return(
     <OverlayTrigger
       key={order.id}
@@ -18,7 +23,12 @@ const renderOrder = (order) => {
         </Tooltip>
       }
     >
-			<tr key={order.id}>
+			<tr
+				key={order.id}
+				className="order-book-order"
+				// onClick={ fillOrder(dispatch, exchange, order, account) }
+				onClick={(e) => fillOrder(dispatch, exchange, order, account)}
+			>
 				<td>{order.tokenAmount}</td>
 				<td className={`text-${order.orderTypeClass}`}> { order.tokenPrice } </td>
 				<td>{ order.etherAmount }</td>
@@ -29,16 +39,15 @@ const renderOrder = (order) => {
 
 const showOrderBook = (props) => {
 	const { orderBook } = props  // E6 syntax to create a variable called 'oderBook' from the poperty called 'orderBook' of props
-
 	return(
 		<tbody>
-			{ orderBook.sellOrders.map((order) => renderOrder(order))}
+			{ orderBook.sellOrders.map((order) => renderOrder(order, props))}
 				<tr>
 					<th>MAGG</th>
 					<th>MAGG/ETH</th>
 					<th>ETH</th>
 				</tr> 
-			{ orderBook.buyOrders.map((order) => renderOrder(order))}
+			{ orderBook.buyOrders.map((order) => renderOrder(order, props))}
 		</tbody>
 	)
 }
@@ -63,11 +72,14 @@ class OrderBook extends Component {
 }
 
 function mapStateToProps(state) {
-	const orderBook = orderBookSelector(state)
-	console.log({orderBook})
+	const orderBookLoaded = orderBookLoadedSelector(state)
+	const orderFilling = orderFillingSelector(state)
+
   return { // keep the order of the following statements to make sure the orderBook is built before trying to show it
 		orderBook: orderBookSelector(state),
-		showOrderBook: orderBookLoadedSelector(state)
+		showOrderBook: orderBookLoaded && !orderFilling,
+		exchange: exchangeSelector(state),
+		account: accountSelector(state)
   }
 }
 

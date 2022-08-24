@@ -9,7 +9,8 @@ import {
 	allOrdersLoaded,
 	orderCancelling,
 	orderCancelled,
-	orderFilling	
+	orderFilling,
+	orderFilled	
 } from './actions'
 import { log } from '../helpers'
 import Token from '../abis/Token.json'
@@ -91,6 +92,9 @@ export const subscribeToEvents = async (dispatch, exchange) => {
 	exchange.events.Cancel({}, (error, event) =>{		// subscribe to the Cancel event of our exchange. We pass an empty filter as first parameter with {}.
 														// we receive the event which includes the order that triggered the event
 		dispatch(orderCancelled(event.returnValues))	// dispatch a new action to change the redux state and trigger UI update
+	})
+	exchange.events.Trade({}, (error, event) =>{		// subscribe to Trade events (any filled orders)
+		dispatch(orderFilled(event.returnValues))
 	})
 } 
 

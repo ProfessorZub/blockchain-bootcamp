@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { exchangeSelector, connectionSelector } from  '../store/selectors'
+import { exchangeSelector, web3Selector } from  '../store/selectors'
 import { 
   loadAllOrders,
   subscribeToEvents
@@ -9,6 +9,7 @@ import OrderBook from './OrderBook'
 import Trades from './Trades'
 import MyTransactions from './MyTransactions'
 import PriceChart from './PriceChart'
+import Balance from './Balance'
 
 class Content extends Component {
   componentWillMount() {
@@ -16,8 +17,8 @@ class Content extends Component {
   }
 
   async loadBlockchainData(props){
-    const { dispatch, exchange, connection} = props
-    await loadAllOrders(connection, exchange, dispatch) // TODO: Can you refactor to only pass here exchange and dispatch? Get connection from the state via selector?
+    const { dispatch, exchange, web3} = props
+    await loadAllOrders(web3, exchange, dispatch) 
     await subscribeToEvents(dispatch, exchange)
   }
 
@@ -25,15 +26,7 @@ class Content extends Component {
     return(
       <div className="content">
         <div className="vertical-split">
-          <div className="card bg-dark text-white">
-            <div className="card-header">
-                Card Title - Vertical Split 1-1
-            </div>
-            <div className="card-body">
-              <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="/#" className="card-link">Card link</a>
-            </div>
-          </div>
+          <Balance />
           <div className="card bg-dark text-white">
             <div className="card-header">
                 Card Title - Vertical Split 1-2
@@ -58,7 +51,7 @@ class Content extends Component {
 function mapStateToProps(state) {
   return {
     exchange: exchangeSelector(state),
-    connection: connectionSelector(state)
+    web3: web3Selector(state)
   }
 }
 

@@ -80,3 +80,49 @@ export function orderFilled(order) {
 		order 
 	}
 }
+
+// Ether balance from wallet was loaded
+export function etherBalanceLoaded(balance) {
+	return {
+		type: 'ETHER_BALANCE_LOADED',
+		balance
+	}
+}
+
+// Token balance from wallet was loaded
+export function tokenBalanceLoaded(balance) {
+	return {
+		type: 'TOKEN_BALANCE_LOADED',
+		balance
+	}
+}
+
+// Ether balance from exchange was loaded
+export function exchangeEtherBalanceLoaded(balance) {
+	return {
+		type: 'EXCHANGE_ETHER_BALANCE_LOADED',
+		balance
+	}
+}
+
+// Token balance from exchange was loaded
+export function exchangeTokenBalanceLoaded(balance) {
+	return {
+		type: 'EXCHANGE_TOKEN_BALANCE_LOADED',
+		balance
+	}
+}
+
+// All balances were loaded
+export function balancesLoaded() {
+	return {
+		type: 'BALANCES_LOADED'
+	}
+}
+
+// Balances are loading
+export function balancesLoading() {
+	return {
+		type: 'BALANCES_LOADING'
+	}
+}

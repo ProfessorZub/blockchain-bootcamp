@@ -11,6 +11,7 @@ import {
 } from '../store/selectors'
 import { fillOrder } from '../store/interactions'
 
+// TODO: Refactor: I don't need to pass props as it is available anywhere with this.props
 const renderOrder = (order, props) => {
 	const { dispatch, exchange, account} = props
 	return(

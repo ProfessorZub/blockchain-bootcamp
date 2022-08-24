@@ -17,3 +17,10 @@ export const tokens = ether
 export const log = (obj) => {   
   console.log(obj)
 } 
+
+export const formatBalance = (balance) => {
+	const precision  = 100 			 // 2 decimal places
+	balance = ether(balance)
+	balance = Math.round(balance * precision) / precision
+	return balance
+}

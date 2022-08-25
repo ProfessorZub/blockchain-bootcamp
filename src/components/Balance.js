@@ -26,20 +26,11 @@ import { etherDepositAmountChanged, etherWithdrawAmountChanged } from '../store/
 // TODO: Refactor. Bit messy
 const showDepositForm = (token,props) => {
   const {dispatch, exchange, web3, etherDepositAmount, account } = props
-  let tokenDepositAmountChanged
-  let depositToken
-  let 
-  if (token === 'ETH') {
-    tokenDepositAmountChanged = (args) => etherDepositAmountChanged(args)
-    depositToken = (args) => depositEther(args)
-  } else {
-    tokenDepositAmountChanged = (args) => tokenDepositAmountChanged(args)
-    depositToken = (args) => depositToken(args)
-  }
+
   return(
     <form className="row" onSubmit={(event) => {
       event.preventDefault()
-      depositToken(dispatch, exchange, web3, etherDepositAmount, account)
+      depositEther(dispatch, exchange, web3, etherDepositAmount, account)
       console.log("form submitting...")
     }}>
       <div className="col-12 col-sm pr-sm-2">

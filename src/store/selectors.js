@@ -357,6 +357,9 @@ export const orderFillingSelector = createSelector(orderFilling, status => statu
 const balancesLoading = state => get(state, 'exchange.balancesLoading', true)
 export const balancesLoadingSelector = createSelector(balancesLoading, status => status)
 
+const balancesLoaded = state => get(state, 'exchange.balancesLoaded', true)
+export const balancesLoadedSelector = createSelector(balancesLoaded, status => status)
+
 const etherBalance = state => get(state, 'web3.balance', 0)
 export const etherBalanceSelector = createSelector(
 	etherBalance, 
@@ -388,3 +391,9 @@ export const exchangeTokenBalanceSelector = createSelector(
 		return formatBalance(balance)
 	}
 )
+
+const etherDepositAmount = state => get(state, 'exchange.etherDepositAmount', null)
+export const etherDepositAmountSelector = createSelector(etherDepositAmount, amount => amount)
+
+const etherWithdrawAmount = state => get(state, 'exchange.etherWithdrawAmount', null)
+export const etherWithdrawAmountSelector = createSelector(etherWithdrawAmount, amount => amount)

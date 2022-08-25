@@ -126,3 +126,19 @@ export function balancesLoading() {
 		type: 'BALANCES_LOADING'
 	}
 }
+
+// Deposits
+export function etherDepositAmountChanged(amount) {
+	return {
+		type: 'ETHER_DEPOSIT_AMOUNT_CHANGED',
+		amount
+	}
+}
+
+// Withdrawals
+export function etherWithdrawAmountChanged(amount) {
+	return {
+		type: 'ETHER_WITHDRAW_AMOUNT_CHANGED',
+		amount
+	}
+}

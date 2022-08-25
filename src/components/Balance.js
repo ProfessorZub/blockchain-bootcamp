@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { loadBalances } from '../store/interactions'
+import { 
+  loadBalances,
+  depositEther,
+  withdrawEther
+  } from '../store/interactions'
 import { Tab, Tabs } from 'react-bootstrap'
 import {
   web3Selector,
@@ -11,21 +15,38 @@ import {
   tokenBalanceSelector,
   exchangeEtherBalanceSelector,
   exchangeTokenBalanceSelector,
-  balancesLoadingSelector
+  balancesLoadingSelector,
+  balancesLoadedSelector,
+  etherDepositAmountSelector,
+  etherWithdrawAmountSelector
 } from '../store/selectors'
 import Spinner from './Spinner'
+import { etherDepositAmountChanged, etherWithdrawAmountChanged } from '../store/actions'
 
-const showForm = (formType) => {
+// TODO: Refactor. Bit messy
+const showDepositForm = (token,props) => {
+  const {dispatch, exchange, web3, etherDepositAmount, account } = props
+  let tokenDepositAmountChanged
+  let depositToken
+  let 
+  if (token === 'ETH') {
+    tokenDepositAmountChanged = (args) => etherDepositAmountChanged(args)
+    depositToken = (args) => depositEther(args)
+  } else {
+    tokenDepositAmountChanged = (args) => tokenDepositAmountChanged(args)
+    depositToken = (args) => depositToken(args)
+  }
   return(
     <form className="row" onSubmit={(event) => {
       event.preventDefault()
+      depositToken(dispatch, exchange, web3, etherDepositAmount, account)
       console.log("form submitting...")
     }}>
       <div className="col-12 col-sm pr-sm-2">
         <input
           type="text"
           placeholder="ETH Amount"
-          onChange={(e) => console.log("amount changed...")}
+          onChange={(e) => dispatch(etherDepositAmountChanged(e.target.value))}
           className="form-control form-control-sm bg-dark text-white"
           required />
       </div>
@@ -36,20 +57,34 @@ const showForm = (formType) => {
       </div>
     </form>
   )
-
-
-
-  // switch (formType) {
-  //   case 'deposit':
-  //     console.log("deposit request")
-  //   case 'withdraw':
-  //     console.log("withdraw request")
-  //   default:
-  //     console.log('WRONGGGG')
-  // }
 }
 
-const showBalances = (props) => {
+const showWithdrawForm = (props) => {
+  const {dispatch, exchange, web3, etherWithdrawAmount, account } = props
+  return(
+    <form className="row" onSubmit={(event) => {
+      event.preventDefault()
+      console.log("form submitting...")
+      withdrawEther(dispatch, exchange, web3, etherWithdrawAmount, account)
+    }}>
+      <div className="col-12 col-sm pr-sm-2">
+        <input
+          type="text"
+          placeholder="ETH Amount"
+          onChange={(e) => dispatch(etherWithdrawAmountChanged(e.target.value))}
+          className="form-control form-control-sm bg-dark text-white"
+          required />
+      </div>
+      <div className="col-12 col-sm-auto pl-sm-0">
+        <button type="submit" className="btn btn-primary btn-block btn-sn">
+          Withdraw
+        </button>
+      </div>
+    </form>
+  )
+}
+
+const showBalance = (token,props) => {
     const {
     etherBalance,
     tokenBalance,
@@ -68,14 +103,15 @@ const showBalances = (props) => {
       <tbody>
         <tr>
           <td>ETH</td>
-          <td>{etherBalance}</td>
+          <td>{token === 'ETH' ? etherBalance : tokenBalance}</td>
           <td>{exchangeEtherBalance}</td>
         </tr>
-        <tr>
+     {/*   { showDepositForm(props)}*/}
+{/*        <tr>
           <td>MAGG</td>
           <td>{tokenBalance}</td>
           <td>{exchangeTokenBalance}</td>
-        </tr>
+        </tr>*/}
       </tbody> 
     </table>
   )
@@ -86,12 +122,16 @@ const showTabs = (props) => {
   return(
     <Tabs defaultActiveKey="deposit" className="bg-dark text-white">
       <Tab eventKey="deposit" title="Deposit" className="bg-dark" >
-          { showBalances(props) }
-          { showForm('deposit')}
+          { showBalance('ETH',props) }
+          { showDepositForm('ETH',props)}
+          { showBalance('MAG',props) }
+          { showDepositForm('MAGG',props)}
       </Tab>
       <Tab eventKey="withdraw" title="Withdraw" className="bg-dark">
-          { showBalances(props) }
-          { showForm('withdraw')}
+          { showBalance('ETH',props) }
+          { showWithdrawForm('ETH',props)}
+          { showBalance('MAGG',props) }
+          { showWithdrawForm('MAGG',props)}
       </Tab> 
     </Tabs>
   )
@@ -134,6 +174,7 @@ function mapStateToProps(state) {
   //   balancesLoading: balancesLoadingSelector(state)
   // })
   const balancesLoading = balancesLoadingSelector(state)
+  const balancesLoaded = balancesLoadedSelector(state)
 
   // TODO: balances UI needs to be updated once the order filling goes through. Right now, balances don't change until manually refresh
   // BUG: and balances do not update at all when filling a sell order from the order book (i.e. buying) 
@@ -147,7 +188,11 @@ function mapStateToProps(state) {
     exchangeEtherBalance: exchangeEtherBalanceSelector(state),
     exchangeTokenBalance: exchangeTokenBalanceSelector(state),
     balancesLoading,
-    showTabs: !balancesLoading 
+    balancesLoaded,
+    showTabs: !balancesLoading && balancesLoaded, 
+    etherDepositAmount: etherDepositAmountSelector(state),
+    etherWithdrawAmount: etherWithdrawAmountSelector(state),
+    balancesLoaded: balancesLoadedSelector(state)
   }
 }
 

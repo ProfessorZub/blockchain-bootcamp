@@ -149,3 +149,10 @@ export function etherWithdrawAmountChanged(amount) {
 		amount
 	}
 }
+
+export function tokenWithdrawAmountChanged(amount) {
+	return {
+		type: 'TOKEN_WITHDRAW_AMOUNT_CHANGED',
+		amount
+	}
+}

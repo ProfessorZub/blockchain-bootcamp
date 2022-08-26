@@ -189,4 +189,6 @@ export const withdrawEther = (dispatch, exchange, web3, amount, account) => {
 
 export const depositToken = (dispatch, exchange, web3, amount, token, account) => {
 	console.log("TODO: intreactions -> depositToken()")
+	// Approve exchange to spend the token calling the Token contract
+	
 }

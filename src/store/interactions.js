@@ -164,7 +164,8 @@ export const loadBalances = async (dispatch, web3, exchange, token, account) => 
 	}
 }
 
-export const depositEther = (dispatch, exchange, web3, amount, account) => {
+export const depositEther = (dispatch, exchange, web3, amount, token, account) => {
+	// Note: TODO: token is not used. It is here to help with refactoring in Balance.js. Not ideal 	
 	exchange.methods.depositEther().send({ from: account,  value: web3.utils.toWei(amount, 'ether') })
   	.on('transactionHash', (hash) => {
     dispatch(balancesLoading())
@@ -184,4 +185,8 @@ export const withdrawEther = (dispatch, exchange, web3, amount, account) => {
     console.error(error)
     window.alert(`There was an error!`)
   	})
+}
+
+export const depositToken = (dispatch, exchange, web3, amount, token, account) => {
+	console.log("TODO: intreactions -> depositToken()")
 }

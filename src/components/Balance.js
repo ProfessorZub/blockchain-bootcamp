@@ -3,7 +3,8 @@ import { connect } from 'react-redux'
 import { 
   loadBalances,
   depositEther,
-  withdrawEther
+  withdrawEther,
+  depositToken
   } from '../store/interactions'
 import { Tab, Tabs } from 'react-bootstrap'
 import {
@@ -21,23 +22,36 @@ import {
   etherWithdrawAmountSelector
 } from '../store/selectors'
 import Spinner from './Spinner'
-import { etherDepositAmountChanged, etherWithdrawAmountChanged } from '../store/actions'
+import { etherDepositAmountChanged, etherWithdrawAmountChanged, tokenDepositAmountChanged } from '../store/actions'
 
 // TODO: Refactor. Bit messy
-const showDepositForm = (token,props) => {
-  const {dispatch, exchange, web3, etherDepositAmount, account } = props
+const showDepositForm = (_token,props) => {
+  // Fetch the following from props
+  const {dispatch, exchange, web3, etherDepositAmount, token, account } = props
+  // Only two tokens in this project. If it is not ETHER then it has to be our token MAGG
+  let deposit
+  let amountChanged
+  
+  if (_token === 'ETH') {
+      deposit = (...args) => depositEther(...args)
+      amountChanged = (...args) => etherDepositAmountChanged(...args)  
+  } else {
+      deposit = (...args) => depositToken(...args) 
+      amountChanged = (...args) => tokenDepositAmountChanged(...args) 
+  }
+
 
   return(
     <form className="row" onSubmit={(event) => {
       event.preventDefault()
-      depositEther(dispatch, exchange, web3, etherDepositAmount, account)
+      deposit(dispatch, exchange, web3, etherDepositAmount, token, account)
       console.log("form submitting...")
     }}>
       <div className="col-12 col-sm pr-sm-2">
         <input
           type="text"
-          placeholder="ETH Amount"
-          onChange={(e) => dispatch(etherDepositAmountChanged(e.target.value))}
+          placeholder={`${_token} Amount`}
+          onChange={(e) => dispatch(amountChanged(e.target.value))}
           className="form-control form-control-sm bg-dark text-white"
           required />
       </div>
@@ -50,7 +64,7 @@ const showDepositForm = (token,props) => {
   )
 }
 
-const showWithdrawForm = (props) => {
+const showWithdrawForm = (token, props) => {
   const {dispatch, exchange, web3, etherWithdrawAmount, account } = props
   return(
     <form className="row" onSubmit={(event) => {
@@ -61,7 +75,7 @@ const showWithdrawForm = (props) => {
       <div className="col-12 col-sm pr-sm-2">
         <input
           type="text"
-          placeholder="ETH Amount"
+          placeholder={`${token} Amount`}
           onChange={(e) => dispatch(etherWithdrawAmountChanged(e.target.value))}
           className="form-control form-control-sm bg-dark text-white"
           required />
@@ -93,16 +107,10 @@ const showBalance = (token,props) => {
       </thead> 
       <tbody>
         <tr>
-          <td>ETH</td>
+          <td>{token}</td>
           <td>{token === 'ETH' ? etherBalance : tokenBalance}</td>
-          <td>{exchangeEtherBalance}</td>
+          <td>{token === 'ETH' ? exchangeEtherBalance : exchangeTokenBalance}</td>
         </tr>
-     {/*   { showDepositForm(props)}*/}
-{/*        <tr>
-          <td>MAGG</td>
-          <td>{tokenBalance}</td>
-          <td>{exchangeTokenBalance}</td>
-        </tr>*/}
       </tbody> 
     </table>
   )
@@ -115,7 +123,7 @@ const showTabs = (props) => {
       <Tab eventKey="deposit" title="Deposit" className="bg-dark" >
           { showBalance('ETH',props) }
           { showDepositForm('ETH',props)}
-          { showBalance('MAG',props) }
+          { showBalance('MAGG',props) }
           { showDepositForm('MAGG',props)}
       </Tab>
       <Tab eventKey="withdraw" title="Withdraw" className="bg-dark">

@@ -135,6 +135,13 @@ export function etherDepositAmountChanged(amount) {
 	}
 }
 
+export function tokenDepositAmountChanged(amount) {
+	return {
+		type: 'TOKEN_DEPOSIT_AMOUNT_CHANGED',
+		amount
+	}
+}
+
 // Withdrawals
 export function etherWithdrawAmountChanged(amount) {
 	return {

@@ -190,5 +190,18 @@ export const withdrawEther = (dispatch, exchange, web3, amount, account) => {
 export const depositToken = (dispatch, exchange, web3, amount, token, account) => {
 	console.log("TODO: intreactions -> depositToken()")
 	// Approve exchange to spend the token calling the Token contract
-	
+	console.log("amount inside depositToken in intreactions:" + amount)
+	amount = web3.utils.toWei(amount, 'ether')
+
+	token.methods.approve(exchange.options.address, amount).send({from: account})
+	.on('transactionHash', (hash) => {
+		exchange.methods.depositToken(token.options.address, amount).send({from: account})
+		.on('transactionHash', (hash) => {
+			dispatch(balancesLoading())
+		})
+		.on('error', (error) => {
+			console.error(error)
+			window.alert(`There was an error depositing token!`)
+		})
+	})
 }

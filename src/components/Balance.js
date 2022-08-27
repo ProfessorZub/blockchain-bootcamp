@@ -19,7 +19,9 @@ import {
   balancesLoadingSelector,
   balancesLoadedSelector,
   etherDepositAmountSelector,
-  etherWithdrawAmountSelector
+  etherWithdrawAmountSelector,
+  tokenDepositAmountSelector,
+  tokenWithdrawAmountSelector
 } from '../store/selectors'
 import Spinner from './Spinner'
 import { etherDepositAmountChanged, etherWithdrawAmountChanged, tokenDepositAmountChanged } from '../store/actions'
@@ -27,24 +29,25 @@ import { etherDepositAmountChanged, etherWithdrawAmountChanged, tokenDepositAmou
 // TODO: Refactor. Bit messy
 const showDepositForm = (_token,props) => {
   // Fetch the following from props
-  const {dispatch, exchange, web3, etherDepositAmount, token, account } = props
+  const {dispatch, exchange, web3, etherDepositAmount, tokenDepositAmount, token, account } = props
   // Only two tokens in this project. If it is not ETHER then it has to be our token MAGG
-  let deposit
-  let amountChanged
+  let deposit, amountChanged, amount
   
   if (_token === 'ETH') {
       deposit = (...args) => depositEther(...args)
-      amountChanged = (...args) => etherDepositAmountChanged(...args)  
+      amountChanged = (...args) => etherDepositAmountChanged(...args)
+      amount = etherDepositAmount
   } else {
       deposit = (...args) => depositToken(...args) 
-      amountChanged = (...args) => tokenDepositAmountChanged(...args) 
+      amountChanged = (...args) => tokenDepositAmountChanged(...args)
+      amount = tokenDepositAmount 
+      console.log("amount in Balances.js showDepositForm: " + amount) 
   }
-
 
   return(
     <form className="row" onSubmit={(event) => {
       event.preventDefault()
-      deposit(dispatch, exchange, web3, etherDepositAmount, token, account)
+      deposit(dispatch, exchange, web3, amount, token, account)
       console.log("form submitting...")
     }}>
       <div className="col-12 col-sm pr-sm-2">
@@ -66,6 +69,7 @@ const showDepositForm = (_token,props) => {
 
 const showWithdrawForm = (token, props) => {
   const {dispatch, exchange, web3, etherWithdrawAmount, account } = props
+  let amount
   return(
     <form className="row" onSubmit={(event) => {
       event.preventDefault()
@@ -161,17 +165,6 @@ class Balance extends Component {
 }
 
 function mapStateToProps(state) {
-  // console.log({
-  //   web3: web3Selector(state),
-  //   exchange: exchangeSelector(state),
-  //   token: tokenSelector(state),
-  //   account: accountSelector(state),
-  //   etherBalance: etherBalanceSelector(state),
-  //   tokenBalance: tokenBalanceSelector(state),
-  //   exchangeEtherBalance: exchangeEtherBalanceSelector(state),
-  //   exchangeTokenBalance: exchangeTokenBalanceSelector(state),
-  //   balancesLoading: balancesLoadingSelector(state)
-  // })
   const balancesLoading = balancesLoadingSelector(state)
   const balancesLoaded = balancesLoadedSelector(state)
 
@@ -191,6 +184,8 @@ function mapStateToProps(state) {
     showTabs: !balancesLoading && balancesLoaded, 
     etherDepositAmount: etherDepositAmountSelector(state),
     etherWithdrawAmount: etherWithdrawAmountSelector(state),
+    tokenDepositAmount: tokenDepositAmountSelector(state),
+    tokenWithdrawAmount: tokenWithdrawAmountSelector(state),
     balancesLoaded: balancesLoadedSelector(state)
   }
 }

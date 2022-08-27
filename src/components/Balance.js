@@ -36,9 +36,8 @@ import {
 const showDepositForm = (_token,props) => {
   // Fetch the following from props
   const {dispatch, exchange, web3, etherDepositAmount, tokenDepositAmount, token, account } = props
-  // Only two tokens in this project. If it is not ETHER then it has to be our token MAGG
   let deposit, amountChanged, amount
-  
+  // Only two tokens in this project. If it is not ETHER then it has to be our token MAGG 
   if (_token === 'ETH') {
       deposit = (...args) => depositEther(...args)
       amountChanged = (...args) => etherDepositAmountChanged(...args)
@@ -47,7 +46,6 @@ const showDepositForm = (_token,props) => {
       deposit = (...args) => depositToken(...args) 
       amountChanged = (...args) => tokenDepositAmountChanged(...args)
       amount = tokenDepositAmount 
-      console.log("amount in Balances.js showDepositForm: " + amount) 
   }
 
   return(
@@ -76,19 +74,16 @@ const showDepositForm = (_token,props) => {
 const showWithdrawForm = (_token,props) => {
   // Fetch the following from props
   const {dispatch, exchange, web3, etherWithdrawAmount, tokenWithdrawAmount, token, account } = props
-  // Only two tokens in this project. If it is not ETHER then it has to be our token MAGG
   let withdraw, amountChanged, amount
-  
+  // Only two tokens in this project. If it is not ETHER then it has to be our token MAGG
   if (_token === 'ETH') {
       withdraw = (...args) => withdrawEther(...args)
       amountChanged = (...args) => etherWithdrawAmountChanged(...args)
       amount = etherWithdrawAmount
-      console.log("ether amount in Balances.js showWithdrawForm: " + amount)
   } else {
       withdraw = (...args) => withdrawToken(...args) 
       amountChanged = (...args) => tokenWithdrawAmountChanged(...args)
       amount = tokenWithdrawAmount 
-      console.log("token amount in Balances.js showWithdrawForm: " + amount) 
   }
 
   return(

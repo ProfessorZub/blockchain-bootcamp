@@ -167,14 +167,19 @@ contract Exchange {
 		// as a percentage of the amount they are going to receive (_amountGet). 
 		uint256 feeAmount = _amountGet.mul(feePercent).div(100);		
 
-		// Execute the trade		
-		tokens[_tokenGet][msg.sender] = tokens[_tokenGet][msg.sender].sub(_amountGet.add(feeAmount));
-		tokens[_tokenGive][msg.sender] = tokens[_tokenGive][msg.sender].add(_amountGive);
-			// fee collected goes to the special account: feeAccount
-		tokens[_tokenGet][feeAccount] = tokens[_tokenGet][feeAccount].add(feeAmount);
-		tokens[_tokenGet][_user] = tokens[_tokenGet][_user].add(_amountGet);
-		tokens[_tokenGive][_user] = tokens[_tokenGive][_user].sub(_amountGive);
+		// Execute the trade	- this working for filling sell orders?	
+		// tokens[_tokenGet][msg.sender] = tokens[_tokenGet][msg.sender].sub(_amountGet.add(feeAmount));
+		// tokens[_tokenGive][msg.sender] = tokens[_tokenGive][msg.sender].add(_amountGive);
+		// 	// fee collected goes to the special account: feeAccount
+		// tokens[_tokenGet][feeAccount] = tokens[_tokenGet][feeAccount].add(feeAmount);
+		// tokens[_tokenGet][_user] = tokens[_tokenGet][_user].add(_amountGet);
+		// tokens[_tokenGive][_user] = tokens[_tokenGive][_user].sub(_amountGive);
 
+		tokens[_tokenGet][msg.sender] = tokens[_tokenGet][msg.sender].sub(_amountGet.add(feeAmount));
+        tokens[_tokenGet][_user] = tokens[_tokenGet][_user].add(_amountGet);
+        tokens[_tokenGet][feeAccount] = tokens[_tokenGet][feeAccount].add(feeAmount);
+        tokens[_tokenGive][_user] = tokens[_tokenGive][_user].sub(_amountGive);
+        tokens[_tokenGive][msg.sender] = tokens[_tokenGive][msg.sender].add(_amountGive);
 		// Emit Trade event
 		emit Trade(_id, _user, _tokenGet, _amountGet, _tokenGive, _amountGive, msg.sender, now);
 	}

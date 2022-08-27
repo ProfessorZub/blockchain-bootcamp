@@ -125,7 +125,6 @@ export const cancelOrder = (dispatch, exchange, order, account) => {
 }
 
 export const fillOrder = (dispatch, exchange, order, account) => {
-	// Call cancelOrder on the exchange contract. Needs an order id passed to it an an account to verify ownership of the order.
 	exchange.methods.fillOrder(order.id).send({ from: account })
 	.on('transactionHash', (hash) =>{
 		// Create and dispatch an action so the UI gets updated accordingly

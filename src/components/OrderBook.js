@@ -11,7 +11,6 @@ import {
 } from '../store/selectors'
 import { fillOrder } from '../store/interactions'
 
-// TODO: Refactor: I don't need to pass props as it is available anywhere with this.props
 const renderOrder = (order, props) => {
 	const { dispatch, exchange, account} = props
 	return(
@@ -27,12 +26,11 @@ const renderOrder = (order, props) => {
 			<tr
 				key={order.id}
 				className="order-book-order"
-				// onClick={ fillOrder(dispatch, exchange, order, account) }
 				onClick={(e) => fillOrder(dispatch, exchange, order, account)}
 			>
 				<td>{order.tokenAmount}</td>
 				<td className={`text-${order.orderTypeClass}`}> { order.tokenPrice } </td>
-				<td>{ order.etherAmount }</td>
+				<td>{order.etherAmount}</td>
 			</tr>
 		</OverlayTrigger>
 	)
@@ -48,7 +46,7 @@ const showOrderBook = (props) => {
 					<th>MAGG/ETH</th>
 					<th>ETH</th>
 				</tr> 
-			{ orderBook.buyOrders.map((order) => renderOrder(order, props))}
+			{orderBook.buyOrders.map((order) => renderOrder(order, props))}
 		</tbody>
 	)
 }

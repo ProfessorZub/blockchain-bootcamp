@@ -176,7 +176,8 @@ export const depositEther = (dispatch, exchange, web3, amount, token, account) =
   	})
 }
 
-export const withdrawEther = (dispatch, exchange, web3, amount, account) => {
+export const withdrawEther = (dispatch, exchange, web3, amount, token, account) => {
+	// Note: TODO: token is not used. It is here to help with refactoring in Balance.js. Not ideal 	
 	exchange.methods.withdrawEther(web3.utils.toWei(amount, 'ether')).send({ from: account })
   	.on('transactionHash', (hash) => {
     dispatch(balancesLoading())

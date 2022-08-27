@@ -83,11 +83,12 @@ const showWithdrawForm = (_token,props) => {
       withdraw = (...args) => withdrawEther(...args)
       amountChanged = (...args) => etherWithdrawAmountChanged(...args)
       amount = etherWithdrawAmount
+      console.log("ether amount in Balances.js showWithdrawForm: " + amount)
   } else {
       withdraw = (...args) => withdrawToken(...args) 
       amountChanged = (...args) => tokenWithdrawAmountChanged(...args)
       amount = tokenWithdrawAmount 
-      console.log("amount in Balances.js showWithdrawForm: " + amount) 
+      console.log("token amount in Balances.js showWithdrawForm: " + amount) 
   }
 
   return(

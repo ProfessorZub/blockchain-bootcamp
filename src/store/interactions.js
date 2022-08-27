@@ -205,3 +205,15 @@ export const depositToken = (dispatch, exchange, web3, amount, token, account) =
 		})
 	})
 }
+
+export const withdrawToken = (dispatch, exchange, web3, amount, token, account) => {
+	amount = web3.utils.toWei(amount, 'ether')
+	exchange.methods.withdrawToken(token.options.address, amount).send({from: account})
+	.on('transactionHash', (hash) => {
+		dispatch(balancesLoading)
+	})
+	.on('error', (error) => {
+		console.log(error)
+		window.alert('There was an error withdrawing token!')
+	})
+}

@@ -4,7 +4,8 @@ import {
   loadBalances,
   depositEther,
   withdrawEther,
-  depositToken
+  depositToken,
+  withdrawToken
   } from '../store/interactions'
 import { Tab, Tabs } from 'react-bootstrap'
 import {
@@ -24,7 +25,12 @@ import {
   tokenWithdrawAmountSelector
 } from '../store/selectors'
 import Spinner from './Spinner'
-import { etherDepositAmountChanged, etherWithdrawAmountChanged, tokenDepositAmountChanged } from '../store/actions'
+import {
+  etherDepositAmountChanged,
+  etherWithdrawAmountChanged,
+  tokenDepositAmountChanged,
+  tokenWithdrawAmountChanged
+} from '../store/actions'
 
 // TODO: Refactor. Bit messy
 const showDepositForm = (_token,props) => {
@@ -67,20 +73,34 @@ const showDepositForm = (_token,props) => {
   )
 }
 
-const showWithdrawForm = (token, props) => {
-  const {dispatch, exchange, web3, etherWithdrawAmount, account } = props
-  let amount
+const showWithdrawForm = (_token,props) => {
+  // Fetch the following from props
+  const {dispatch, exchange, web3, etherWithdrawAmount, tokenWithdrawAmount, token, account } = props
+  // Only two tokens in this project. If it is not ETHER then it has to be our token MAGG
+  let withdraw, amountChanged, amount
+  
+  if (_token === 'ETH') {
+      withdraw = (...args) => withdrawEther(...args)
+      amountChanged = (...args) => etherWithdrawAmountChanged(...args)
+      amount = etherWithdrawAmount
+  } else {
+      withdraw = (...args) => withdrawToken(...args) 
+      amountChanged = (...args) => tokenWithdrawAmountChanged(...args)
+      amount = tokenWithdrawAmount 
+      console.log("amount in Balances.js showWithdrawForm: " + amount) 
+  }
+
   return(
     <form className="row" onSubmit={(event) => {
       event.preventDefault()
+      withdraw(dispatch, exchange, web3, amount, token, account)
       console.log("form submitting...")
-      withdrawEther(dispatch, exchange, web3, etherWithdrawAmount, account)
     }}>
       <div className="col-12 col-sm pr-sm-2">
         <input
           type="text"
-          placeholder={`${token} Amount`}
-          onChange={(e) => dispatch(etherWithdrawAmountChanged(e.target.value))}
+          placeholder={`${_token} Amount`}
+          onChange={(e) => dispatch(amountChanged(e.target.value))}
           className="form-control form-control-sm bg-dark text-white"
           required />
       </div>

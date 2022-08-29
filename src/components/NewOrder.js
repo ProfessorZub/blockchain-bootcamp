@@ -40,7 +40,7 @@ const showForm = (props) => {
         <form onSubmit={event => {
           event.preventDefault()
           makeBuyOrder(dispatch, exchange, token, web3, buyOrder, account)
-        }}>
+          }}>
           <div className="form-group small">
             <label>Buy Amount (MAGG)</label>
             <div className="input-group">
@@ -70,7 +70,37 @@ const showForm = (props) => {
         </form>
       </Tab>
       <Tab eventKey="sell" title="Sell" className="bg-dark">
-        
+        <form onSubmit={event => {
+          event.preventDefault()
+          makeSellOrder(dispatch, exchange, token, web3, sellOrder, account)
+          }}>
+          <div className="form-group small">
+            <label>Sell Amount (MAGG)</label>
+            <div className="input-group">
+              <input
+                type="text"
+                className="form-control form-control-sm bg-dark text-white"
+                placeholder="Sell Amount"
+                onChange={ e => dispatch(sellOrderAmountChanged(e.target.value))}              
+                required
+              />
+            </div>
+          </div>
+          <div className="form-group small">
+            <label>Sell Price</label>
+            <div className="input-group">
+              <input
+                type="text"
+                className="form-control form-control-sm bg-dark text-white"
+                placeholder="Price"
+                onChange={ e => dispatch(sellOrderPriceChanged(e.target.value))}              
+                required
+              />
+            </div>
+          </div>
+          <button type="submit" className="btn btn-primary btn-sm btn-block">Sell Order</button>
+          { showSellTotal ? <small> Total: {sellOrder.amount * sellOrder.price} ETH</small> : null }
+        </form> 
       </Tab>
     </Tabs>
   )

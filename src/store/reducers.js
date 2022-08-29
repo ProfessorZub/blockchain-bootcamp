@@ -90,6 +90,13 @@ function exchange(state = {}, action) {
 		case 'BUY_ORDER_MAKING':
 			return { ...state, buyOrder: { ...state.buyOrder, amount: null, price: null, making: true }}
 
+		case 'SELL_ORDER_AMOUNT_CHANGED':
+			return { ...state, sellOrder: { ...state.sellOrder, amount: action.amount } }
+		case 'SELL_ORDER_PRICE_CHANGED':
+			return { ...state, sellOrder: { ...state.sellOrder, price: action.price } }
+		case 'SELL_ORDER_MAKING':
+			return { ...state, sellOrder: { ...state.sellOrder, amount: null, price: null, making: true }}
+
 		case 'ORDER_MADE':
 			// Add to state but avoid creating duplicate
 			index = state.allOrders.data.findIndex(order => order.id === action.order.id)

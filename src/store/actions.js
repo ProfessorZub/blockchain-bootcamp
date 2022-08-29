@@ -156,3 +156,55 @@ export function tokenWithdrawAmountChanged(amount) {
 		amount
 	}
 }
+
+// Orders
+// Generic Ordder
+export	function orderMade(order) {
+	return {
+		type: 'ORDER_MADE',
+		order
+	}
+}
+
+// Buy Orders
+export function buyOrderAmountChanged(amount) {
+	return {
+		type: 'BUY_ORDER_AMOUNT_CHANGED',
+		amount
+	}
+}
+
+export function buyOrderPriceChanged(price) {
+	return {
+		type: 'BUY_ORDER_PRICE_CHANGED',
+		price
+	}
+}
+
+export function buyOrderMaking() {
+	return {
+		type: 'BUY_ORDER_MAKING'
+	}
+}
+
+// Sell Orders
+export function sellOrderAmountChanged(amount) {
+	return {
+		type: 'SELL_ORDER_AMOUNT_CHANGED',
+		amount
+	}
+}
+
+export function sellOrderPriceChanged(price) {
+	return {
+		type: 'SELL_ORDER_PRICE_CHANGED',
+		price
+	}
+}
+
+export function sellOrderMaking() {
+	return {
+		type: 'SELL_ORDER_MAKING'
+	}
+}
+

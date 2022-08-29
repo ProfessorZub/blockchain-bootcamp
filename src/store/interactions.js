@@ -16,7 +16,10 @@ import {
 	exchangeEtherBalanceLoaded,
 	exchangeTokenBalanceLoaded,
 	balancesLoading,
-	balancesLoaded	
+	balancesLoaded,
+	buyOrderMaking,
+	sellOrderMaking,
+	orderMade	
 } from './actions'
 import { log } from '../helpers'
 import Token from '../abis/Token.json'
@@ -100,14 +103,21 @@ export const subscribeToEvents = async (dispatch, exchange) => {
 														// we receive the event which includes the order that triggered the event
 		dispatch(orderCancelled(event.returnValues))	// dispatch a new action to change the redux state and trigger UI update
 	})
+	
 	exchange.events.Trade({}, (error, event) =>{		// subscribe to Trade events (any filled orders)
 		dispatch(orderFilled(event.returnValues))
 	})
+	
 	exchange.events.Deposit({}, (error,event) =>{
 		dispatch(balancesLoaded())
 	})
+	
 	exchange.events.Withdraw({}, (error,event) =>{
 	dispatch(balancesLoaded())
+	})
+
+	exchange.events.Order({}, (error,event) =>{			// Subscribe to Order events. Same event type for Buy and Sell orders
+	dispatch(orderMade(event.returnValues))
 	})
 } 
 
@@ -210,10 +220,57 @@ export const withdrawToken = (dispatch, exchange, web3, amount, token, account) 
 	amount = web3.utils.toWei(amount, 'ether')
 	exchange.methods.withdrawToken(token.options.address, amount).send({from: account})
 	.on('transactionHash', (hash) => {
-		dispatch(balancesLoading)
+		dispatch(balancesLoading())
 	})
 	.on('error', (error) => {
 		console.log(error)
 		window.alert('There was an error withdrawing token!')
+	})
+}
+
+// New Buy and Sell Orders
+// Make Buy Order
+export const makeBuyOrder = (dispatch, exchange, token, web3, order, account) => {
+	// Format arguments needed to call makeOrder in Exchange contract
+	// For a buy order, the token to get is MAGG and the token to give is ETH
+	// Get address for tokens
+	const tokenGiveAddress = ETHER_ADDRESS
+	const tokenGetAddress = token.options.address
+
+	// The amounts of tokens to get and give are determined by the amount and price entered in the buy order
+	const tokenGetAmount = web3.utils.toWei(order.amount, 'ether')
+	const tokenGiveAmount = web3.utils.toWei((order.amount * order.price).toString(),'ether')
+
+	// Call makeOrder in Exchange contract
+	exchange.methods.makeOrder(tokenGetAddress, tokenGetAmount, tokenGiveAddress, tokenGiveAmount).send({from: account})
+	.on('transactionHash', hash => {
+		dispatch(buyOrderMaking())
+	})
+	.on('error', error => {
+		console.log(error)
+		window.alert('There was an error making the buy order')
+	})
+}
+
+// Make Sell Order
+export const makeSellOrder = (dispatch, exchange, token, web3, order, account) => {
+	// Format arguments needed to call makeOrder in Exchange contract
+	// For a sell order, the token to get is ETH and the token to give is MAGG
+	// Get address for tokens
+	const tokenGiveAddress = token.options.address 
+	const tokenGetAddress = ETHER_ADDRESS
+
+	// The amounts of tokens to get and give are determined by the amount and price entered in the buy order
+	const tokenGetAmount = web3.utils.toWei((order.amount * order.price).toString(),'ether')
+	const tokenGiveAmount = web3.utils.toWei(order.amount, 'ether')
+
+	// Call makeOrder in Exchange contract
+	exchange.methods.makeOrder(tokenGetAddress, tokenGetAmount, tokenGiveAddress, tokenGiveAmount).send({from: account})
+	.on('transactionHash', hash => {
+		dispatch(sellOrderMaking())
+	})
+	.on('error', error => {
+		console.log(error)
+		window.alert('There was an error making the sell order')
 	})
 }

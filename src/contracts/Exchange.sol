@@ -85,9 +85,7 @@ contract Exchange {
 		uint256 timeStamp;
 	}
 
-	// TODO: Add orders to stotrage
-	// TODO: Retrieve orders from storage
-
+	// TODO: Should cancelOrder and fillOrder use 'memory' or 'storage'
 
 	constructor (address _feeAccount, uint256 _feePercent) public {
 		feeAccount = _feeAccount;

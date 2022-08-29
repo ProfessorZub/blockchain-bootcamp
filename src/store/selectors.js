@@ -392,6 +392,7 @@ export const exchangeTokenBalanceSelector = createSelector(
 	}
 )
 
+// Deposits and withdrawals
 const etherDepositAmount = state => get(state, 'exchange.etherDepositAmount', null)
 export const etherDepositAmountSelector = createSelector(etherDepositAmount, amount => amount)
 
@@ -403,3 +404,10 @@ export const tokenDepositAmountSelector = createSelector(tokenDepositAmount, amo
 
 const tokenWithdrawAmount = state => get(state, 'exchange.tokenWithdrawAmount', null)
 export const tokenWithdrawAmountSelector = createSelector(tokenWithdrawAmount, amount => amount)
+
+// Create new buy and sell orders
+const buyOrder = state => get(state, 'exchange.buyOrder', {})
+export const buyOrderSelector = createSelector(buyOrder, order => order)
+
+const sellOrder = state => get(state, 'exchange.sellOrder', {})
+export const sellOrderSelector = createSelector(sellOrder, order => order)

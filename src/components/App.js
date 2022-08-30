@@ -16,7 +16,7 @@ import {
 } from '../store/selectors'
 
 class App extends Component {
-  componentWillMount() {
+  componentDidMount() {
     this.loadBlockchainData(this.props.dispatch)
   }
 

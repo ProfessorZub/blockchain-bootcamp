@@ -157,7 +157,7 @@ const showTabs = (props) => {
 }
 
 class Balance extends Component {
-  componentWillMount() {
+  componentDidMount() {
     this.loadBlockchainData()
   }
 

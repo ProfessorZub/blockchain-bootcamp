@@ -23,18 +23,28 @@ module.exports = async function (callback) {
 		 const exchange = await Exchange.deployed()
 		 console.log("Exchange fetched at: ", exchange.address)
 
-		// Set up accounts
-		 const sender = accounts[0]
-		 const receiver = accounts[1]
+		// // Set up accounts
+		//  const sender = accounts[2]
+		//  const receiver = accounts[1]
 
-		// Give tokens to accounts[1]
+		// // Give tokens to accounts[1]
+		//  let amount = 10000
+		//  await token.transfer(receiver, tokens(amount), {from: sender})
+		//  console.log(`Transferred ${amount} tokens from ${sender} to ${receiver}`)
+
+		// // Rename accounts for use with exchange
+		//  const user1 = accounts[2]
+		//  const user2 = accounts[1]
+
+		// DEBUG: Testing with accounts[1] and [2] instead of [0] and [1] so there are no orders entered by the main user ([0])	
+		 const tokenOwner = accounts[0]
+		 const user1 = accounts[1]
+		 const user2 = accounts[2]
 		 let amount = 10000
-		 await token.transfer(receiver, tokens(amount), {from: sender})
-		 console.log(`Transferred ${amount} tokens from ${sender} to ${receiver}`)
-
-		// Rename accounts for use with exchange
-		 const user1 = accounts[0]
-		 const user2 = accounts[1]
+		 await token.transfer(user1, tokens(amount),{from: tokenOwner})
+		 console.log(`Transferred ${amount} tokens from ${tokenOwner} to ${user1}`)
+		 await token.transfer(user2, tokens(amount),{from: tokenOwner})
+		 console.log(`Transferred ${amount} tokens from ${tokenOwner} to ${user2}`)
 
 		// User 1 deposits Ether
 		 amount = 1

@@ -18,7 +18,6 @@ import {
   exchangeEtherBalanceSelector,
   exchangeTokenBalanceSelector,
   balancesLoadingSelector,
-  balancesLoadedSelector,
   etherDepositAmountSelector,
   etherWithdrawAmountSelector,
   tokenDepositAmountSelector,
@@ -157,7 +156,7 @@ const showTabs = (props) => {
 }
 
 class Balance extends Component {
-  componentDidMount() {
+  componentWillMount() {
     this.loadBlockchainData()
   }
 
@@ -182,10 +181,8 @@ class Balance extends Component {
 
 function mapStateToProps(state) {
   const balancesLoading = balancesLoadingSelector(state)
-  const balancesLoaded = balancesLoadedSelector(state)
+  console.log({balancesLoading})
 
-  // TODO: balances UI needs to be updated once the order filling goes through. Right now, balances don't change until manually refresh
-  // BUG: and balances do not update at all when filling a sell order from the order book (i.e. buying) 
   return {
     web3: web3Selector(state),
     exchange: exchangeSelector(state),
@@ -196,13 +193,11 @@ function mapStateToProps(state) {
     exchangeEtherBalance: exchangeEtherBalanceSelector(state),
     exchangeTokenBalance: exchangeTokenBalanceSelector(state),
     balancesLoading,
-    balancesLoaded,
-    showTabs: !balancesLoading && balancesLoaded, 
+    showTabs: !balancesLoading,  
     etherDepositAmount: etherDepositAmountSelector(state),
     etherWithdrawAmount: etherWithdrawAmountSelector(state),
     tokenDepositAmount: tokenDepositAmountSelector(state),
     tokenWithdrawAmount: tokenWithdrawAmountSelector(state),
-    balancesLoaded: balancesLoadedSelector(state)
   }
 }
 

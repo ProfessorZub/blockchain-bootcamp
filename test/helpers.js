@@ -32,8 +32,6 @@ function wait(_seconds) {
 	})
 }
 
-//function (_seconds) { let promise = New Promise(function(resolve, reject){const milliseconds = _seconds * 1000;	setTimeOut(() => resolve("done"), milliseconds);return promise})}
-
 module.exports = {
 	ETHER_ADDRESS,
 	tokens,

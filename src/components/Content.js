@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { exchangeSelector, web3Selector } from  '../store/selectors'
+import { exchangeSelector, web3Selector, tokenSelector, accountSelector } from  '../store/selectors'
 import { 
   loadAllOrders,
   subscribeToEvents
@@ -13,14 +13,14 @@ import Balance from './Balance'
 import NewOrder from './NewOrder'
 
 class Content extends Component {
-  componentDidMount() {
+  componentWillMount() {
     this.loadBlockchainData(this.props)
   }
 
   async loadBlockchainData(props){
-    const { dispatch, exchange, web3} = props
+    const { dispatch, exchange, web3, token, account} = props
     await loadAllOrders(web3, exchange, dispatch) 
-    await subscribeToEvents(dispatch, exchange)
+    await subscribeToEvents(dispatch, web3, exchange, token, account)
   }
 
   render() {
@@ -44,8 +44,10 @@ class Content extends Component {
 function mapStateToProps(state) {
   return {
     exchange: exchangeSelector(state),
-    web3: web3Selector(state)
+    web3: web3Selector(state),
+    token: tokenSelector(state),
+    account: accountSelector(state)
   }
 }
 
-export default connect(mapStateToProps)(Content) // Passing mapStateProps function to connect() subscribes the wrapped component to Redux store updates so that the function gets called whenever the Redux store changes
+export default connect(mapStateToProps)(Content)

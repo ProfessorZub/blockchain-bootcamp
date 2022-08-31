@@ -357,9 +357,6 @@ export const orderFillingSelector = createSelector(orderFilling, status => statu
 const balancesLoading = state => get(state, 'exchange.balancesLoading', true)
 export const balancesLoadingSelector = createSelector(balancesLoading, status => status)
 
-const balancesLoaded = state => get(state, 'exchange.balancesLoaded', true)
-export const balancesLoadedSelector = createSelector(balancesLoaded, status => status)
-
 const etherBalance = state => get(state, 'web3.balance', 0)
 export const etherBalanceSelector = createSelector(
 	etherBalance, 

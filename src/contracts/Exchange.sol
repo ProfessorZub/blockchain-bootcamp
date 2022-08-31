@@ -85,7 +85,7 @@ contract Exchange {
 		uint256 timeStamp;
 	}
 
-	// TODO: Should cancelOrder and fillOrder use 'memory' or 'storage'
+	// TODO: Should cancelOrder and fillOrder use 'memory' or 'storage'. Memory seems to work fine.
 
 	constructor (address _feeAccount, uint256 _feePercent) public {
 		feeAccount = _feeAccount;

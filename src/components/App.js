@@ -16,7 +16,7 @@ import {
 } from '../store/selectors'
 
 class App extends Component {
-  componentDidMount() {
+  componentWillMount() {
     this.loadBlockchainData(this.props.dispatch)
   }
 
@@ -28,29 +28,14 @@ class App extends Component {
     const abi = Token.abi
     const networks = Token.networks
     const networkID = await web3.eth.net.getId()
-    //const tokenAddress = await Token.networks[networkID].address // causes crash when not in correct network
     const token = await loadToken(web3, networkID, dispatch)
     if (!token) {
       window.alert('Token smart contract not detected on the current network. Please select another network with Metamask.')
     }
-    //const totalSupply = await token.methods.totalSupply().call()  // causes crash when not in correct network
     const exchange = await loadExchange(web3, networkID, dispatch)
     if (!exchange) {
       window.alert('Exchange smart contract not detected on the current network. Please select another network with Metamask.')
     }
-
-    // log({networkType})
-    // log({chainID})
-    // log({web3})
-    // log({accounts})
-    // log({Token})
-    // log({abi})
-    // log({networks})
-    // log({networkID})
-    // log({tokenAddress})
-    // log({token})
-    // log({totalSupply})
- 
   }
 
   render() {

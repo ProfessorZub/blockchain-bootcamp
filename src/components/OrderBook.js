@@ -37,7 +37,7 @@ const renderOrder = (order, props) => {
 }
 
 const showOrderBook = (props) => {
-	const { orderBook } = props  // E6 syntax to create a variable called 'oderBook' from the poperty called 'orderBook' of props
+	const { orderBook } = props 
 	return(
 		<tbody>
 			{ orderBook.sellOrders.map((order) => renderOrder(order, props))}
@@ -74,7 +74,7 @@ function mapStateToProps(state) {
 	const orderBookLoaded = orderBookLoadedSelector(state)
 	const orderFilling = orderFillingSelector(state)
 
-  return { // keep the order of the following statements to make sure the orderBook is built before trying to show it
+  return { 
 		orderBook: orderBookSelector(state),
 		showOrderBook: orderBookLoaded && !orderFilling,
 		exchange: exchangeSelector(state),

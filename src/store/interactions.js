@@ -75,7 +75,6 @@ export const loadExchange = async (web3, networkId, dispatch) => {
 	}
 }
 
-// TODO: Can you refactor to only pass here exchange and dispatch? Get connection from the state via selector?
 export const loadAllOrders = async (connection, exchange, dispatch) => { 
 	// Fetch cancelled orders with the "Cancel" event stream
 	const currentBlock = await connection.eth.getBlockNumber()
@@ -98,7 +97,7 @@ export const loadAllOrders = async (connection, exchange, dispatch) => {
 	dispatch(allOrdersLoaded(allOrders))
 }
 
-export const subscribeToEvents = async (dispatch, exchange) => {
+export const subscribeToEvents = async (dispatch, web3, exchange, token, account) => {
 	exchange.events.Cancel({}, (error, event) =>{		// subscribe to the Cancel event of our exchange. We pass an empty filter as first parameter with {}.
 														// we receive the event which includes the order that triggered the event
 		dispatch(orderCancelled(event.returnValues))	// dispatch a new action to change the redux state and trigger UI update
@@ -106,18 +105,19 @@ export const subscribeToEvents = async (dispatch, exchange) => {
 	
 	exchange.events.Trade({}, (error, event) =>{		// subscribe to Trade events (any filled orders)
 		dispatch(orderFilled(event.returnValues))
+		loadBalances(dispatch, web3, exchange, token, account)		
 	})
 	
 	exchange.events.Deposit({}, (error,event) =>{
-		dispatch(balancesLoaded())
+		loadBalances(dispatch, web3, exchange, token, account)
 	})
 	
 	exchange.events.Withdraw({}, (error,event) =>{
-	dispatch(balancesLoaded())
+		loadBalances(dispatch, web3, exchange, token, account)
 	})
 
 	exchange.events.Order({}, (error,event) =>{			// Subscribe to Order events. Same event type for Buy and Sell orders
-	dispatch(orderMade(event.returnValues))
+		dispatch(orderMade(event.returnValues))
 	})
 } 
 
@@ -139,6 +139,7 @@ export const fillOrder = (dispatch, exchange, order, account) => {
 	.on('transactionHash', (hash) =>{
 		// Create and dispatch an action so the UI gets updated accordingly
 		dispatch(orderFilling())
+		dispatch(balancesLoading())
 	})
 	.on('error', (error) => {
 		log({error})
@@ -162,8 +163,6 @@ export const loadBalances = async (dispatch, web3, exchange, token, account) => 
 
 	      // Token balance in exchange
 	      const exchangeTokenBalance = await exchange.methods.balanceOf(token.options.address, account).call()
-	      // console.log(token.options.address)
-	      // console.log({tokenaddress})
 	      dispatch(exchangeTokenBalanceLoaded(exchangeTokenBalance))
 
 	      // Trigger all balances loaded
@@ -173,8 +172,7 @@ export const loadBalances = async (dispatch, web3, exchange, token, account) => 
 	}
 }
 
-export const depositEther = (dispatch, exchange, web3, amount, token, account) => {
-	// Note: TODO: token is not used. It is here to help with refactoring in Balance.js. Not ideal 	
+export const depositEther = (dispatch, exchange, web3, amount, token, account) => {	
 	exchange.methods.depositEther().send({ from: account,  value: web3.utils.toWei(amount, 'ether') })
   	.on('transactionHash', (hash) => {
     dispatch(balancesLoading())
@@ -186,7 +184,6 @@ export const depositEther = (dispatch, exchange, web3, amount, token, account) =
 }
 
 export const withdrawEther = (dispatch, exchange, web3, amount, token, account) => {
-	// Note: TODO: token is not used. It is here to help with refactoring in Balance.js. Not ideal 	
 	exchange.methods.withdrawEther(web3.utils.toWei(amount, 'ether')).send({ from: account })
   	.on('transactionHash', (hash) => {
     dispatch(balancesLoading())

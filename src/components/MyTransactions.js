@@ -96,7 +96,7 @@ class MyTransactions extends Component {
 function mapStateToProps(state) {
 	const myOpenOrdersLoaded = myOpenOrdersLoadedSelector(state)
 	const orderCancelling = orderCancellingSelector(state)
-	//console.log({state})
+
 	return{
 		myFilledOrders: myFilledOrdersSelector(state),
 		showMyFilledOrders: myFilledOrdersLoadedSelector(state),

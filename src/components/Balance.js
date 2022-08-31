@@ -181,7 +181,6 @@ class Balance extends Component {
 
 function mapStateToProps(state) {
   const balancesLoading = balancesLoadingSelector(state)
-  console.log({balancesLoading})
 
   return {
     web3: web3Selector(state),

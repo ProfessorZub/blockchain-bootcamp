@@ -77,9 +77,14 @@ export const loadExchange = async (web3, networkId, dispatch) => {
 
 export const loadAllOrders = async (connection, exchange, dispatch) => { 
 	// Fetch cancelled orders with the "Cancel" event stream
-	const currentBlock = await connection.eth.getBlockNumber()
-	//log({currentBlock})
-	const startBlock = currentBlock - 1000
+
+	// <DEBUG: This was a workaround for Ganache hanging when getting events from block 0. Do I need it in Kovan?
+	// const currentBlock = await connection.eth.getBlockNumber()
+	// //log({currentBlock})
+	// const startBlock = currentBlock - 1000
+	// </DEBUG>
+
+	const startBlock = 0
 	const cancelStream = await exchange.getPastEvents('Cancel', { fromBlock: startBlock, toBlock: 'latest'})
 	// Format cancelled orders
 	const cancelledOrders = cancelStream.map((event) => event.returnValues)  // event.returnValues contains the actual orders

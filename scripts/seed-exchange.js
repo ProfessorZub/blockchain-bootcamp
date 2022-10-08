@@ -6,7 +6,7 @@ const Exchange = artifacts.require("Exchange")
 const {tokens, ether, ETHER_ADDRESS, trace, wait} = require('../test/helpers.js')
 
 module.exports = async function (callback) {
-	// TODO: Fill me in ...	
+
 	try {
 		//D
 		console.log("seed-exchange.js is running")

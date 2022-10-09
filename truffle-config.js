@@ -62,6 +62,17 @@ module.exports = {
       gas: 5000000,  // gas limit
       gasPrice: 25000000000,  // 25 Gwei
       network_id: 42
+    },
+    goerli: {
+      provider: function() {
+        return new HDWalletProvider(
+          privateKeys.split(','),   // Array of account private keys         
+          `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`  // URL to an Ethereum node
+        )
+      },
+      gas: 5000000,  // gas limit
+      gasPrice: 25000000000,  // 25 Gwei
+      network_id: 5
     }
     // Another network with more advanced options...
     // advanced: {

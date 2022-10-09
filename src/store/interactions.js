@@ -58,7 +58,7 @@ export const loadToken = async (web3, networkId, dispatch) => {
 		console.log(">>> Token loaded at " + token._address)
 		return token
 	} catch (error) {
-		console.log('Contract not deployed to the current network. Please select another network with Metamask.')
+		console.log('Contract not deployed to the current network. Please select another network with Metamask.', error)
 		return null
 	}
 }

@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import './App.css'
-import { log } from '../helpers'
 import Navbar from './Navbar'
 import Contents from './Content'
 import { connect } from 'react-redux'
@@ -28,6 +27,7 @@ class App extends Component {
     const abi = Token.abi
     const networks = Token.networks
     const networkID = await web3.eth.net.getId()
+    log()
     const token = await loadToken(web3, networkID, dispatch)
     if (!token) {
       window.alert('Token smart contract not detected on the current network. Please select another network with Metamask.')

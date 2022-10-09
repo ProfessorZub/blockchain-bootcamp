@@ -5,7 +5,7 @@ const EVM_REVERT = 'EVM reverted...'
 // -- SETUP & WEB3 -- //
 // TODO: I did not need this section until I tried to run scripts with truffle exec and it couldn't find web3
 const Web3 = require('web3')
-let web3 = new Web3('ws://127.0.0.1:8545')
+let web3 = new Web3('ws://127.0.0.1:7545')
 // -- -- //
 
 function tokens (_readableAmount) {

@@ -159,3 +159,7 @@ tr.order-book-order {
 .nav-link:hover, .nav-link:focus {
   color: #fff;
 }
+
+.navbar {
+  padding-left: 13px;
+}
